@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SharedLibrary
 {
-    public class User
+    public class UserDevice
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public DateTime CreationDate { get; set; }
         public List<Device> Devices { get; set; }
     }

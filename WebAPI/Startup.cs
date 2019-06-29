@@ -11,49 +11,53 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebAPI.Data;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
+using System.IO;
+
 
 namespace WebAPI
 {
-#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup'
     public class Startup
-#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup'
     {
-#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Startup(IConfiguration)'
+
         public Startup(IConfiguration configuration)
-#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Startup(IConfiguration)'
         {
             Configuration = configuration;
         }
 
-#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Configuration'
         public IConfiguration Configuration { get; }
-#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Configuration'
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.ConfigureServices(IServiceCollection)'
         public void ConfigureServices(IServiceCollection services)
-#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.ConfigureServices(IServiceCollection)'
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-
-                options.UseSqlite(Configuration.GetConnectionString("Sqlite"))
-            
+                options.UseSqlite(Configuration.GetConnectionString("Sqlite"))            
             );
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new Info { Title = "Minotaur API", Version = "v1" });
+            //    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            //    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            //    c.IncludeXmlComments(xmlPath);
+            //});
+            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+            });
+            services.AddCors();
+            services.AddMvc();
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Configure(IApplicationBuilder, IHostingEnvironment)'
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement 'Startup.Configure(IApplicationBuilder, IHostingEnvironment)'
         {
             if (env.IsDevelopment())
             {
@@ -66,11 +70,15 @@ namespace WebAPI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
