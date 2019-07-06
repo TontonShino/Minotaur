@@ -40,7 +40,8 @@ namespace Web
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<DevicesService>();
+            services.AddTransient<DevicesService>();
+            //services.AddSingleton<DevicesService>();
             services.AddSingleton<UserAuthService>();
             services.AddMvc();
             // Server Side Blazor doesn't register HttpClient by default

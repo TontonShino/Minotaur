@@ -17,16 +17,20 @@ namespace Web.Services
         string apiUrl = "";
         ApplicationDbContext db;
         
-
+        public DevicesService(HttpClient httpClient)
+        {
+            this.client = httpClient;
+        }
         public async Task CreateUserDeviceAsync(string userid)
         {
-            client = new HttpClient();
+            Console.WriteLine($"Adresse URI {client.BaseAddress}");
+            
             var ud = new UserDevice
             {
                 Id = userid,
                 CreationDate = DateTime.UtcNow
             };
-             await client.SendJsonAsync(HttpMethod.Post, "api/UserDevices", ud);
+             await client.SendJsonAsync(HttpMethod.Post, client.BaseAddress+"api/UserDevices", ud);
         }
         public void AddDevice(string userid)
         {
@@ -38,9 +42,8 @@ namespace Web.Services
         }
 
         public async Task<UserDevice> GetUserDevices(string userid)
-        {
-            client = new HttpClient();
-            return await client.GetJsonAsync<UserDevice>("api/UserDevices/" + userid);
+        {            
+            return await client.GetJsonAsync<UserDevice>(client.BaseAddress+"api/UserDevices/" + userid);
         }
         public bool ExistUserData(string id)
         {
