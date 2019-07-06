@@ -14,7 +14,6 @@ namespace Web.Services
     public class DevicesService
     {
         HttpClient client;
-        string apiUrl = "";
         ApplicationDbContext db;
         
         public DevicesService(HttpClient httpClient)
@@ -32,11 +31,11 @@ namespace Web.Services
             };
              await client.SendJsonAsync(HttpMethod.Post, client.BaseAddress+"api/UserDevices", ud);
         }
-        public void AddDevice(string userid)
+        public void AddDevice(string userid, Device device)
         {
 
         }
-        public void RemoveDevice(string userid)
+        public void RemoveDevice(string userid, int deviceId)
         {
 
         }

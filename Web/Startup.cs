@@ -39,10 +39,7 @@ namespace Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddTransient<DevicesService>();
-            //services.AddSingleton<DevicesService>();
-            services.AddSingleton<UserAuthService>();
+
             services.AddMvc();
             // Server Side Blazor doesn't register HttpClient by default
             if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
@@ -58,7 +55,11 @@ namespace Web
                     };
                 });
             }
-            
+            services.AddSingleton<WeatherForecastService>();
+            services.AddTransient<DevicesService>();
+            //services.AddSingleton<DevicesService>();
+            services.AddTransient<UserAuthService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

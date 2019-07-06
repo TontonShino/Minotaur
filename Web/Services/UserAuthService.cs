@@ -13,7 +13,12 @@ namespace Web.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public string getUserIdAsync(ClaimsPrincipal claimsPrincipal)
+        public UserAuthService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+        public string getUserId(ClaimsPrincipal claimsPrincipal)
         {
             return _userManager.GetUserId(claimsPrincipal);
         }

@@ -78,8 +78,9 @@ string UserId;
 //}
 protected override async Task OnInitAsync()
 {
-    
-    setUserId(userclaims);
+
+    setUserId2();
+    await RequestApi();
 }
 private async Task PrintWebApiResponse()
 {
@@ -89,7 +90,7 @@ private async Task PrintWebApiResponse()
 
 private async Task RequestBl()
 {
-    ud = new UserDevice();
+
     ud = await devicesServices.GetUserDevices(UserId);
     Console.WriteLine($"UserDevice {ud.ToString()}");
 }
@@ -103,6 +104,17 @@ private async Task writeToConsole()
 {
     Console.WriteLine($"User id = {UserId}");
 }
+private async Task setUserId2()
+{
+    try
+    {
+        UserId = uas.getUserId(userclaims);
+    }
+    catch(Exception e)
+    {
+        Console.WriteLine($"Erreur : {e.ToString()}");
+    }
+}
 
 private void setUserId(ClaimsPrincipal user)
 {
@@ -113,7 +125,7 @@ private async Task RegisterProfile()
 {
 
     ud = new UserDevice();
-    
+
 
     try
     {
