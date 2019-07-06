@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Web.Data;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Web.Services
 {
@@ -13,10 +15,18 @@ namespace Web.Services
     {
         HttpClient client;
         string apiUrl = "";
+        ApplicationDbContext db;
+        
 
-        public void CreateUserDevice(string userid)
+        public async Task CreateUserDeviceAsync(string userid)
         {
-
+            client = new HttpClient();
+            var ud = new UserDevice
+            {
+                Id = userid,
+                CreationDate = DateTime.UtcNow
+            };
+             await client.SendJsonAsync(HttpMethod.Post, "api/UserDevices", ud);
         }
         public void AddDevice(string userid)
         {
@@ -27,9 +37,14 @@ namespace Web.Services
 
         }
 
-       
-        public bool ExistUserData(int id)
+        public async Task<UserDevice> GetUserDevices(string userid)
         {
+            client = new HttpClient();
+            return await client.GetJsonAsync<UserDevice>("api/UserDevices/" + userid);
+        }
+        public bool ExistUserData(string id)
+        {
+
             return true;
         }
     }

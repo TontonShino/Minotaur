@@ -13,6 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Web.Data;
 using Web.Services;
+using System.Net.Http;
+using Microsoft.AspNetCore.Components;
+
 
 namespace Web
 {
@@ -38,7 +41,23 @@ namespace Web
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<DevicesService>();
+            services.AddSingleton<UserAuthService>();
             services.AddMvc();
+            // Server Side Blazor doesn't register HttpClient by default
+            if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
+            {
+                // Setup HttpClient for server side in a client side compatible fashion
+                services.AddScoped<HttpClient>(s =>
+                {
+                    // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+                    var uriHelper = s.GetRequiredService<IUriHelper>();
+                    return new HttpClient
+                    {
+                        BaseAddress = new Uri(uriHelper.GetBaseUri())
+                    };
+                });
+            }
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

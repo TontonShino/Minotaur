@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SharedLibrary;
 
-namespace PlanningGenerator.Models
+namespace Web.Data
 {
     public class AppUser : IdentityUser
     {
@@ -15,6 +16,7 @@ namespace PlanningGenerator.Models
         public string Prenom { get; set; }
         [PersonalData]
         public DateTime DOB { get; set; }
+        public List<Device> Devices { get; set; }
 
 
     }
