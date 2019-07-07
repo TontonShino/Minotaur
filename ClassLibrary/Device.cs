@@ -9,7 +9,7 @@ namespace SharedLibrary
         public string Name { get; set; }
         public string Description { get; set; }
         public List<IPAddrr> IPAddrrs { get; set; }
-        public UserDevice User { get; set; }
+        public UserDevice UserDevice { get; set; }
         public string UserId { get; set; }
         
     }
