@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebMinotaur.Data.Migrations
+namespace WebMinotaur.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -152,6 +152,48 @@ namespace WebMinotaur.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    AppUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Devices_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IPAddrrs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Address = table.Column<string>(nullable: true),
+                    Record = table.Column<DateTime>(nullable: false),
+                    DeviceId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IPAddrrs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IPAddrrs_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -188,6 +230,16 @@ namespace WebMinotaur.Data.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Devices_AppUserId",
+                table: "Devices",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IPAddrrs_DeviceId",
+                table: "IPAddrrs",
+                column: "DeviceId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -208,7 +260,13 @@ namespace WebMinotaur.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "IPAddrrs");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

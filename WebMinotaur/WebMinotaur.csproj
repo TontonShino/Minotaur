@@ -3,12 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
-    <UserSecretsId>aspnet-WebMinotaur-C7EED305-8DAC-408B-8BBB-415650B09921</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Update="app.db" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0-preview6.19307.2" />
@@ -19,7 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary\SharedLibrary.csproj" />
+    <ProjectReference Include="..\SharedLib\SharedLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

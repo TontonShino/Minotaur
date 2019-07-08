@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebMinotaur.Data;
-using SharedLibrary;
+using SharedLib;
 
 namespace WebMinotaur
 {
