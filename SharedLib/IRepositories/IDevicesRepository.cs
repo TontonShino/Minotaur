@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedLib.IRepo
+namespace SharedLib.IRepositories
 {
-    public interface IDeviceManager
+    public interface IDevicesRepository
     {
         Task<List<Device>> GetDevicesAsync(string userid);
         List<Device> GetDevices(string userid);
