@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using SharedLib;
+using SharedLib.Models;
+
+
+namespace WebMinotaur.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthenticateController : ControllerBase
+    {
+        private readonly UserManager<AppUser> userManager;
+
+        public AuthenticateController(UserManager<AppUser> userManager)
+        {
+            this.userManager = userManager;
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel login)
+        {
+            var user = await userManager.FindByNameAsync(login.Username);
+
+            if (user != null && await userManager.CheckPasswordAsync(user, login.Password))
+            {
+                var authClaims = new[]
+                {
+                    new Claim (JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OhalalaMonCoeurDanseLaMacarena"));
+
+                var token = new JwtSecurityToken(
+                    issuer: "http://minotaur.fr",
+                    audience: "http://minotaur.fr",
+                    expires: DateTime.Now.AddMonths(3),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                    );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
+            }
+            return Unauthorized();
+        }
+    }
+}
