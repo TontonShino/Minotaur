@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SharedLib;
 using SharedLib.Models;
@@ -24,7 +25,7 @@ namespace WebMinotaur.Controllers
 
         public AuthenticateController(UserManager<AppUser> userManager)
         {
-            this.userManager = userManager;
+            this.userManager = userManager;            
         }
 
         [HttpPost]
@@ -59,6 +60,7 @@ namespace WebMinotaur.Controllers
             }
             return Unauthorized();
         }
+
 
         //[HttpPost]
         //[Route("logout")]

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SharedLib;
 using WebMinotaur.Data;
 
@@ -17,10 +18,11 @@ namespace WebMinotaur.Controllers
     public class DevicesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
+        
         public DevicesController(ApplicationDbContext context)
         {
             _context = context;
+           
         }
 
         // GET: api/Devices
