@@ -19,22 +19,22 @@ namespace WebMinotaur.Repositories
             throw new NotImplementedException();
         }
 
-        public void DeleteDevice(int id)
+        public void DeleteDevice(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteDeviceAsync(int id)
+        public Task DeleteDeviceAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Device GetDevice(int id)
+        public Device GetDevice(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Device> GetDeviceAsync(int id)
+        public Task<Device> GetDeviceAsync(string id)
         {
             throw new NotImplementedException();
         }

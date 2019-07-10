@@ -32,7 +32,7 @@ namespace WebMinotaur.Controllers
 
         // GET: api/Devices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Device>> GetDevice(int id)
+        public async Task<ActionResult<Device>> GetDevice(string id)
         {
             var device = await _context.Devices.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace WebMinotaur.Controllers
 
         // PUT: api/Devices/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDevice(int id, Device device)
+        public async Task<IActionResult> PutDevice(string id, Device device)
         {
             if (id != device.Id)
             {
@@ -100,7 +100,7 @@ namespace WebMinotaur.Controllers
             return device;
         }
 
-        private bool DeviceExists(int id)
+        private bool DeviceExists(string id)
         {
             return _context.Devices.Any(e => e.Id == id);
         }

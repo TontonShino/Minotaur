@@ -9,14 +9,14 @@ namespace SharedLib.IRepositories
     {
         Task<List<Device>> GetDevicesAsync(string userid);
         List<Device> GetDevices(string userid);
-        Task<Device> GetDeviceAsync(int id);
-        Device GetDevice(int id);
+        Task<Device> GetDeviceAsync(string id);
+        Device GetDevice(string id);
         Task<Device> AddDeviceAsync(Device device);
         Device AddDevice(Device device);
         Device UpdateDevice(Device device);
         Task<Device> UpdateDeviceAsync(Device device);
-        Task DeleteDeviceAsync(int id);
-        void DeleteDevice(int id);
+        Task DeleteDeviceAsync(string id);
+        void DeleteDevice(string id);
 
     }
 }
