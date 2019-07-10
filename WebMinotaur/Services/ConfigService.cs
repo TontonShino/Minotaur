@@ -14,9 +14,21 @@ namespace WebMinotaur.Services
         {
             this.configuration = configuration;
         }
+
         public string GetJwtSecret()
         {
             return configuration.GetSection("Secrets:jwt").Value;
         }
+
+        public string GetAudience()
+        {
+            return configuration.GetSection("JwtParams:Audience").Value;
+        }
+
+        public string GetIssuer()
+        {
+            return configuration.GetSection("JwtParams:Issuer").Value;
+        }
+
     }
 }

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace SharedLib.IServices
 {
-    public interface ITokenGenerator
+    public interface ITokenService
     {
-        /*Generator*/
-        //Create Token Device
-
-        //Delete Token Device
+        JwtSecurityToken GenerateTokenDevice(string username);
+        JwtSecurityToken DecodeToken(string tokenString);
     }
 }
