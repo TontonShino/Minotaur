@@ -9,7 +9,7 @@ namespace WebMinotaur.Services
 {
     public class UserAuthService : IUserAuthService
     {
-        public string getUserId(ClaimsPrincipal claimsPrincipal)
+        public string GetUserId(ClaimsPrincipal claimsPrincipal)
         {
             throw new NotImplementedException();
         }
