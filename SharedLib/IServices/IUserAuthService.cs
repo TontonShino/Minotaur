@@ -7,6 +7,6 @@ namespace SharedLib.IServices
 {
     public interface IUserAuthService
     {
-        string getUserId(ClaimsPrincipal claimsPrincipal);
+        string GetUserId(ClaimsPrincipal claimsPrincipal);
     }
 }

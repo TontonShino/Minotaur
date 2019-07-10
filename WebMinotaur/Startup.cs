@@ -35,6 +35,7 @@ namespace WebMinotaur
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
+            
 
             services.AddDefaultIdentity<AppUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -43,7 +44,7 @@ namespace WebMinotaur
 
             services.AddServerSideBlazor();
             services.AddMvc();
-                        services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
