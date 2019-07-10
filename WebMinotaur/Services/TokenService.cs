@@ -40,14 +40,9 @@ namespace WebMinotaur.Services
 
         public JwtSecurityToken DecodeToken(string tokenString)
         {
-            //var stream = "[encoded jwt]";
-            //var handler = new JwtSecurityTokenHandler();
-            //var jsonToken = handler.ReadToken(stream);
-            //var tokenS = handler.ReadToken(tokenJwtReponse.access_token) as JwtSecurityToken;
-            //I can get Claims using:
-
-            //var jti = tokenS.Claims.First(claim => claim.Type == "jti").Value;
-            throw new NotImplementedException();
+            //source: https://stackoverflow.com/questions/38340078/how-to-decode-jwt-token
+            //Todo: To test !!!
+            return new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
         }
 
     }
