@@ -4,59 +4,86 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebMinotaur.Data;
 
 namespace WebMinotaur.Repositories
 {
     public class DevicesRepository : IDevicesRepository
     {
+        private readonly ApplicationDbContext db;
+        public DevicesRepository(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
         public Device AddDevice(Device device)
         {
-            throw new NotImplementedException();
+            db.Devices.Add(device);
+            db.SaveChanges();
+            return device;
         }
 
-        public Task<Device> AddDeviceAsync(Device device)
+        public async Task<Device> AddDeviceAsync(Device device)
         {
-            throw new NotImplementedException();
+            await db.Devices.AddAsync(device);
+            await db.SaveChangesAsync();
+            return device;
         }
 
         public void DeleteDevice(string id)
         {
-            throw new NotImplementedException();
+            var device = db.Devices.Find(id);
+
+            if(device != null)
+            {
+                db.Devices.Remove(device);
+                db.SaveChanges();
+            }
+
         }
 
-        public Task DeleteDeviceAsync(string id)
+        public async Task DeleteDeviceAsync(string id)
         {
-            throw new NotImplementedException();
+            var device = await db.Devices.FindAsync(id);
+
+            if (device != null)
+            {
+                db.Devices.Remove(device);
+                await db.SaveChangesAsync();
+            }
         }
 
         public Device GetDevice(string id)
         {
-            throw new NotImplementedException();
+            return db.Devices.Find(id);
         }
 
-        public Task<Device> GetDeviceAsync(string id)
+        public async Task<Device> GetDeviceAsync(string id)
         {
-            throw new NotImplementedException();
+            return await db.Devices.FindAsync(id);
         }
 
-        public List<Device> GetDevices(string userid)
+        public List<Device> GetDevicesByUserId(string userid)
         {
-            throw new NotImplementedException();
+            return db.Devices.Where(u => u.AppUserId == userid).ToList();
         }
 
-        public Task<List<Device>> GetDevicesAsync(string userid)
+        public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
         {
-            throw new NotImplementedException();
+            return await db.Devices.Where(u => u.AppUserId == userid).ToAsyncEnumerable().ToList();
         }
 
         public Device UpdateDevice(Device device)
         {
-            throw new NotImplementedException();
+            db.Devices.Update(device);
+            db.SaveChanges();
+            return device;
         }
 
-        public Task<Device> UpdateDeviceAsync(Device device)
+        public async Task<Device> UpdateDeviceAsync(Device device)
         {
-            throw new NotImplementedException();
+            db.Devices.Update(device);
+            await db.SaveChangesAsync();
+            return device;
         }
     }
 }
