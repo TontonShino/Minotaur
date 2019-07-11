@@ -5,28 +5,28 @@ using System.Threading.Tasks;
 
 namespace SharedLib.IRepositories
 {
-    public interface ITokenDevicesRepository
+    public interface IDeviceTokensRepository
     {
         //Create
-        TokenDevice create(TokenDevice tokendevice);
-        Task<TokenDevice> CreateAsync(TokenDevice tokenDevice);
+        DeviceToken Create(DeviceToken tokendevice);
+        Task<DeviceToken> CreateAsync(DeviceToken tokenDevice);
         //Read
-        TokenDevice Get(string id);
-        Task<TokenDevice> GetAsync(string id);
+        DeviceToken Get(string id);
+        Task<DeviceToken> GetAsync(string id);
         //Update
-        TokenDevice Update(TokenDevice tokendevice);
-        Task<TokenDevice> UpdateAsync(TokenDevice tokendevice);
+        DeviceToken Update(DeviceToken tokendevice);
+        Task<DeviceToken> UpdateAsync(DeviceToken tokendevice);
         //Delete
         void Remove(string id);
         Task RemoveAsync(string id);
         //GetAll
-        IEnumerable<TokenDevice> GetAll();
-        Task<IEnumerable<TokenDevice>> GetAllAsync();
+        IEnumerable<DeviceToken> GetAll();
+        Task<IEnumerable<DeviceToken>> GetAllAsync();
         //Revoke
         void Revoke(string id);
         void RevokeAsync(string id);
         //GetValidsTokens
-        IEnumerable<TokenDevice> GetValidsToken(string deviceid);
+        IEnumerable<DeviceToken> GetValidsToken(string deviceid);
         //IsEnabled
         bool IsEnabled(string token);
     }

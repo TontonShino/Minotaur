@@ -7,8 +7,8 @@ namespace SharedLib.IRepositories
 {
     public interface IDevicesRepository
     {
-        Task<List<Device>> GetDevicesAsync(string userid);
-        List<Device> GetDevices(string userid);
+        Task<List<Device>> GetDevicesAsyncByUserId(string userid);
+        List<Device> GetDevicesByUserId(string userid);
         Task<Device> GetDeviceAsync(string id);
         Device GetDevice(string id);
         Task<Device> AddDeviceAsync(Device device);
