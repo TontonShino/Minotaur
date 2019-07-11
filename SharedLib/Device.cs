@@ -9,7 +9,7 @@ namespace SharedLib
         public string Name { get; set; }
         public string Description { get; set; }
         public List<InfoIP> InfoIP { get; set; }
-        public List<TokenDevice> TokenDevices { get; set; }
+        public List<DeviceToken> TokenDevices { get; set; }
         public AppUser AppUser { get; set; }
         public string AppUserId { get; set; }
         
