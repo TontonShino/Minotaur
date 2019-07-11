@@ -1,4 +1,5 @@
-﻿using SharedLib;
+﻿using Microsoft.EntityFrameworkCore;
+using SharedLib;
 using SharedLib.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -62,20 +63,35 @@ namespace WebMinotaur.Repositories
             return await db.Devices.FindAsync(id);
         }
 
-        public List<Device> GetDevicesByUserId(string userid)
+        public IEnumerable<Device> GetDevicesByUserId(string userid)
         {
-            return db.Devices.Where(u => u.AppUserId == userid).ToList();
+            return db.Devices.Where(u => u.AppUserId == userid);
         }
 
-        public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
+        public async Task<IEnumerable<Device>> GetDevicesAsyncByUserId(string userid)
         {
-            return await db.Devices.Where(u => u.AppUserId == userid).ToAsyncEnumerable().ToList();
+            //return await db.Devices.Where(u => u.AppUserId == userid).ToAsyncEnumerable();
+            throw new NotImplementedException();
         }
 
         public Device UpdateDevice(Device device)
         {
-            db.Devices.Update(device);
-            db.SaveChanges();
+            db.Entry(device).State = EntityState.Modified;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DeviceExists(device.Id))
+                {
+                 //Todo    
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return device;
         }
 
@@ -84,6 +100,11 @@ namespace WebMinotaur.Repositories
             db.Devices.Update(device);
             await db.SaveChangesAsync();
             return device;
+        }
+
+        public bool DeviceExists(string id)
+        {
+            return db.Devices.Any(e => e.Id == id);
         }
     }
 }

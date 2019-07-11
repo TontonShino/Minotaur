@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SharedLib;
+using SharedLib.IRepositories;
 using WebMinotaur.Data;
 
 namespace WebMinotaur.Controllers
@@ -18,11 +19,19 @@ namespace WebMinotaur.Controllers
     public class DevicesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        
-        public DevicesController(ApplicationDbContext context)
+        private readonly IDevicesRepository _dr; 
+        public DevicesController(ApplicationDbContext context, IDevicesRepository dr)
         {
             _context = context;
+            _dr = dr;
            
+        }
+        [HttpGet]
+        [Route("userdevices/{id}")]
+        public async Task<ActionResult<IEnumerable<Device>>> GetUserDevices(string id)
+        {
+            //return await _dr.GetDevicesAsyncByUserId(id);
+            throw new NotImplementedException();
         }
 
         // GET: api/Devices

@@ -18,6 +18,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SharedLib.IServices;
 using WebMinotaur.Services;
+using SharedLib.IRepositories;
+using WebMinotaur.Repositories;
+using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace WebMinotaur
 {
@@ -60,13 +64,28 @@ namespace WebMinotaur
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = "http://minotaur.fr",
-                    ValidIssuer = "http://minotaur.fr",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OhalalaMonCoeurDanseLaMacarena"))
+                    ValidAudience = Configuration.GetSection("JwtParams:Audience").ToString(),
+                    ValidIssuer = Configuration.GetSection("JwtParams:Issuer").ToString(),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets:jwt").ToString()))
                 };
             });
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IConfigService, ConfigService>();
+            services.AddTransient<IDevicesRepository, DevicesRepository>();
+
+            if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
+            {
+                // Setup HttpClient for server side in a client side compatible fashion
+                services.AddScoped<HttpClient>(s =>
+                {
+                    // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+                    var uriHelper = s.GetRequiredService<IUriHelper>();
+                    return new HttpClient
+                    {
+                        BaseAddress = new Uri(uriHelper.GetBaseUri())
+                    };
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
