@@ -16,6 +16,8 @@ using SharedLib;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SharedLib.IServices;
+using WebMinotaur.Services;
 
 namespace WebMinotaur
 {
@@ -63,6 +65,8 @@ namespace WebMinotaur
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OhalalaMonCoeurDanseLaMacarena"))
                 };
             });
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IConfigService, ConfigService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
