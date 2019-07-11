@@ -40,8 +40,6 @@ namespace WebMinotaur.Services
 
         public JwtSecurityToken DecodeToken(string tokenString)
         {
-            //source: https://stackoverflow.com/questions/38340078/how-to-decode-jwt-token
-            //Todo: To test !!!
             return new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
         }
 
