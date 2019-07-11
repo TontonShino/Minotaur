@@ -17,6 +17,7 @@ namespace WebMinotaur.Data
         public virtual DbSet<AppUser> AppUsers { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<InfoIP> InfoIP { get; set; }
+        public virtual DbSet<DeviceToken> DeviceTokens { get; set; }
 
 
     }
