@@ -23,6 +23,7 @@ using WebMinotaur.Repositories;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
 
+
 namespace WebMinotaur
 {
     public class Startup
@@ -51,16 +52,19 @@ namespace WebMinotaur
 
             services.AddServerSideBlazor();
             services.AddMvc();
-            services.AddAuthentication(options =>
+            services.AddAuthentication(/*options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+               
 
-            })
+            }*/ 
+                )
             .AddCookie()
             .AddJwtBearer(options =>
             {
+                
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -72,6 +76,7 @@ namespace WebMinotaur
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets:jwt").ToString()))
                 };
             });
+
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IConfigService, ConfigService>();
             services.AddTransient<IDevicesRepository, DevicesRepository>();

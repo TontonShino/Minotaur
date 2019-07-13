@@ -73,6 +73,27 @@ namespace WebMinotaur.Controllers
             return Unauthorized();
         }
 
+        [HttpPost]
+        [Route("login2")]
+        public async Task<IActionResult> Login2([FromBody] LoginModel login)
+        {
+            var user = await userManager.FindByNameAsync(login.Username);
+
+            if (user != null && await userManager.CheckPasswordAsync(user, login.Password))
+            {
+
+                var token = tokenService.GenerateTokenDevice(user.UserName);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                });
+            }
+            return Unauthorized();
+        }
+
+
 
 
         //[HttpPost]

@@ -10,10 +10,14 @@ using Microsoft.Extensions.Configuration;
 using SharedLib;
 using SharedLib.IRepositories;
 using WebMinotaur.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 namespace WebMinotaur.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Cookies,Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer,Identity.Application")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DevicesController : ControllerBase
