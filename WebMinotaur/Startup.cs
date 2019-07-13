@@ -44,7 +44,8 @@ namespace WebMinotaur
             
 
             services.AddDefaultIdentity<AppUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddRazorPages();
 
@@ -55,7 +56,9 @@ namespace WebMinotaur
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
             })
+            .AddCookie()
             .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
@@ -72,6 +75,7 @@ namespace WebMinotaur
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IConfigService, ConfigService>();
             services.AddTransient<IDevicesRepository, DevicesRepository>();
+            services.AddTransient<IDeviceTokensRepository, DeviceTokensRepository>();
 
             if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
             {

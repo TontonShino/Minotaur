@@ -13,7 +13,7 @@ using WebMinotaur.Data;
 
 namespace WebMinotaur.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Cookies,Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class DevicesController : ControllerBase
@@ -26,18 +26,19 @@ namespace WebMinotaur.Controllers
             _dr = dr;
            
         }
-        [HttpGet]
-        [Route("userdevices/{id}")]
-        public async Task<ActionResult<IEnumerable<Device>>> GetUserDevices(string id)
-        {
-            //return await _dr.GetDevicesAsyncByUserId(id);
-            throw new NotImplementedException();
-        }
+        //[HttpGet]
+        //[Route("userdevices/{id}")]
+        //public async Task<ActionResult<List<Device>>> GetUserDevices(string id)
+        //{
+        //    var at = Request.Headers["Authorization"];
+        //    return await _dr.GetDevicesAsyncByUserId(id);
+        //}
 
         // GET: api/Devices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Device>>> GetDevices()
         {
+            var at = Request.Headers["Authorization"];
             return await _context.Devices.ToListAsync();
         }
 

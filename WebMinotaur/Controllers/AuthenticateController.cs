@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SharedLib;
+using SharedLib.IRepositories;
+using SharedLib.IServices;
 using SharedLib.Models;
 
 
@@ -22,10 +24,20 @@ namespace WebMinotaur.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
+        private readonly ITokenService tokenService;
+        private readonly IDeviceTokensRepository deviceTokensRepository;
 
-        public AuthenticateController(UserManager<AppUser> userManager)
+        public AuthenticateController
+            (
+                UserManager<AppUser> userManager,
+                ITokenService tokenService,
+                IDeviceTokensRepository deviceTokensRepository
+            )
         {
-            this.userManager = userManager;            
+            this.userManager = userManager;
+            this.tokenService = tokenService;
+            this.deviceTokensRepository = deviceTokensRepository;
+
         }
 
         [HttpPost]
@@ -60,7 +72,7 @@ namespace WebMinotaur.Controllers
             }
             return Unauthorized();
         }
-        
+
 
 
         //[HttpPost]

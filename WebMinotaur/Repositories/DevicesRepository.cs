@@ -63,15 +63,15 @@ namespace WebMinotaur.Repositories
             return await db.Devices.FindAsync(id);
         }
 
-        public IEnumerable<Device> GetDevicesByUserId(string userid)
+        public List<Device> GetDevicesByUserId(string userid)
         {
-            return db.Devices.Where(u => u.AppUserId == userid);
+            return db.Devices.Where(u => u.AppUserId == userid).ToList();
         }
 
-        public async Task<IEnumerable<Device>> GetDevicesAsyncByUserId(string userid)
+        public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
         {
-            //return await db.Devices.Where(u => u.AppUserId == userid).ToAsyncEnumerable();
-            throw new NotImplementedException();
+            return await db.Devices.Where(u => u.AppUserId == userid).ToListAsync();
+            
         }
 
         public Device UpdateDevice(Device device)
