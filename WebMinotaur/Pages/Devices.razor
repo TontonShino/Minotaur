@@ -1,142 +1,41 @@
+@page "/devices"
 
-@*@using Microsoft.AspNetCore.Identity
-@using System.Security.Claims;
-@using  Web.Services
-@using  SharedLibrary
+@using SharedLib
 
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-
-@inject DevicesService devicesServices
-@inject HttpClient client
-@inject UserAuthService uas
-
-
-
-
+@inject IDevicesService devicesService
+@inject IUserAuthService userAuthService
+@inject IJSRuntime jsr
 
 <h3>Devices</h3>
-<AuthorizeView>
-    <Authorized>
-        <div class="container">
-            @if(ud == null)
-            {
-                <div class="container">
-                    <p>No Profile device registered</p>
-                    <div>
-                        <button class="btn btn-primary" @onclick="@(async () => await RegisterProfile())">Register your profile</button>
-                    </div>
-                    
 
-                </div>
-            }
-            else
-            {
-                <div class="container">
-                    <div class="row">
-                        <div>
-                            <p>creation Date : @ud?.CreationDate</p>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
+@code
+{
+[CascadingParameter]
+Task<AuthenticationState> authenticationStateTask { get; set; }
+string userId;
+AppUser user;
+List<Device> devices;
 
-
-        <div class="container">
-            <button class="btn btn-success" @onclick="@PrintWebApiResponse">Fetch Results</button>
-            <button class="btn btn-secondary" @onclick="@RequestApi">Give api</button>
-            <button class="btn btn-secondary" @onclick="@writeToConsole">Show User ID</button>
-            <button class="btn btn-secondary" @onclick=@(() => setUserId(context.User))>Set User Id</button>
-
-        </div>
-
-    </Authorized>
-</AuthorizeView>
-
-
-
-@code {
-[Parameter]
-ClaimsPrincipal userclaims { get; set; }
-
-UserDevice ud;
-string UserId;
-
-//protected override async Task OnInitAsync()
-//{
-
-
-//    //Console.WriteLine($"Value of cascaded {userclaims.Identity.Name}");
-//    ////var userid = UserManager.GetUserId(state.User);
-//    //Console.WriteLine($"Le super USER EST = ${UserId}");
-//    //PrintWebApiResponse();
-//    //RequestBl();
-
-
-
-//}
 protected override async Task OnInitAsync()
 {
-
-    setUserId2();
-    await RequestApi();
-}
-private async Task PrintWebApiResponse()
-{
-    var response = await client.GetStringAsync("/api/UserDevices");
-    Console.WriteLine($"Reponse pour la requete {response}");
-}
-
-private async Task RequestBl()
-{
-
-    ud = await devicesServices.GetUserDevices(UserId);
-    Console.WriteLine($"UserDevice {ud.ToString()}");
-}
-private async Task RequestApi()
-{
-    ud = await devicesServices.GetUserDevices(UserId);
-    Console.WriteLine($"UserDevice {ud.ToString()}");
+    await LogUsername();
 
 }
-private async Task writeToConsole()
+async Task LogUsername()
 {
-    Console.WriteLine($"User id = {UserId}");
-}
-private async Task setUserId2()
-{
-    try
+    var authState = await authenticationStateTask;
+    var user = authState.User;
+    if (user.Identity.IsAuthenticated)
     {
-        UserId = uas.getUserId(userclaims);
+        // Since the user is a ClaimsPrincipal, you can also enumerate claims,
+        // evaluate membership in roles, etc.
+        Console.WriteLine($"Hello, {user.Identity.Name}");
+        
+
     }
-    catch(Exception e)
+    else
     {
-        Console.WriteLine($"Erreur : {e.ToString()}");
+        Console.WriteLine("You're not logged in.");
     }
 }
-
-private void setUserId(ClaimsPrincipal user)
-{
-    UserId = UserManager.GetUserId(user);
-    Console.WriteLine($"L'userId possède {UserId} - {user.Identity.Name}");
 }
-private async Task RegisterProfile()
-{
-
-    ud = new UserDevice();
-
-
-    try
-    {
-        await devicesServices.CreateUserDeviceAsync(UserId);
-    }
-    catch(Exception e)
-    {
-        Console.WriteLine($"Erreur \n {e}");
-    }
-}
-
-
-
-}*@
