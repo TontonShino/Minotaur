@@ -43,6 +43,7 @@ namespace WebMinotaur.Controllers
         public async Task<ActionResult<IEnumerable<Device>>> GetDevices()
         {
             var at = Request.Headers["Authorization"];
+
             return await _context.Devices.ToListAsync();
         }
 

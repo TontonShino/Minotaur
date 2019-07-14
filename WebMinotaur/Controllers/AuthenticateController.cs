@@ -81,7 +81,6 @@ namespace WebMinotaur.Controllers
 
             if (user != null && await userManager.CheckPasswordAsync(user, login.Password))
             {
-
                 var token = tokenService.GenerateTokenDevice(user.UserName);
 
                 return Ok(new

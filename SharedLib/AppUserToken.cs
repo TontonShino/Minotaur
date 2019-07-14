@@ -4,13 +4,14 @@ using System.Text;
 
 namespace SharedLib
 {
-    public class DeviceToken
+    public class AppUserToken
     {
         public string Id { get; set; }
         public DateTime ExpirationDate { get; set; }
         public DateTime CreationDate { get; set; }
-        public Device Device { get; set; }
-        public int DeviceId { get; set; }
+        public AppUser AppUser { get; set; }
+        public string AppUserId { get; set; }
         public bool Enabled { get; set; }
+
     }
 }

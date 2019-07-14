@@ -26,7 +26,7 @@ namespace WebMinotaur.Services
                     new Claim (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OhalalaMonCoeurDanseLaMacarena"));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configService.GetJwtSecret()));
 
             var token = new JwtSecurityToken(
                 issuer: configService.GetIssuer(),

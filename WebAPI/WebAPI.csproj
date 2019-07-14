@@ -27,11 +27,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary\SharedLibrary.csproj" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <None Update="app.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

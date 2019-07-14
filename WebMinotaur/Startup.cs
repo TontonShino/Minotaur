@@ -52,16 +52,19 @@ namespace WebMinotaur
 
             services.AddServerSideBlazor();
             services.AddMvc();
+
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IConfigService, ConfigService>();
+            services.AddTransient<IDevicesRepository, DevicesRepository>();
+            services.AddTransient<IDeviceTokensRepository, DeviceTokensRepository>();
+
             services.AddAuthentication(/*options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-               
-
-            }*/ 
-                )
-            .AddCookie()
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;               
+            } 
+                */)
             .AddJwtBearer(options =>
             {
                 
@@ -71,16 +74,13 @@ namespace WebMinotaur
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = Configuration.GetSection("JwtParams:Audience").ToString(),
-                    ValidIssuer = Configuration.GetSection("JwtParams:Issuer").ToString(),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets:jwt").ToString()))
+                    ValidAudience = Configuration.GetSection("JwtParams:Audience").Value,
+                    ValidIssuer = Configuration.GetSection("JwtParams:Issuer").Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Secrets:jwt").Value))
                 };
             });
 
-            services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IConfigService, ConfigService>();
-            services.AddTransient<IDevicesRepository, DevicesRepository>();
-            services.AddTransient<IDeviceTokensRepository, DeviceTokensRepository>();
+
 
             if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
             {

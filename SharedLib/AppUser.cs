@@ -8,6 +8,7 @@ namespace SharedLib
     public class AppUser : IdentityUser
     {
         public List<Device> Devices { get; set; }
+        public List<AppUserToken> appUserTokens { get; set; }
 
     }
 }
