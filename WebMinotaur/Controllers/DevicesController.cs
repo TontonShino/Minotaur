@@ -40,9 +40,10 @@ namespace WebMinotaur.Controllers
 
         // GET: api/Devices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Device>>> GetDevices()
+        [Route("userdevices/{id}")]
+        public async Task<ActionResult<IEnumerable<Device>>> GetDevices(string id)
         {
-            var at = Request.Headers["Authorization"];
+            
 
             return await _context.Devices.ToListAsync();
         }
