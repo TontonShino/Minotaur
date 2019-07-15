@@ -10,6 +10,6 @@ namespace SharedLib.IServices
         Task CreateUserDeviceAsync(string userid);
         void AddDevice(string userid, Device device);
         void RemoveDevice(string userid, int deviceId);
-        Task<Device> GetUserDevices(string userid);
+        Task<List<Device>> GetUserDevices(string userid);
     }
 }

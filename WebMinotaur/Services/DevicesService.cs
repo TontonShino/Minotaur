@@ -36,9 +36,6 @@ namespace WebMinotaur.Services
             throw new NotImplementedException();
         }
 
-        Task<Device> IDevicesService.GetUserDevices(string userid)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
