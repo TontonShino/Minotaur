@@ -16,8 +16,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace WebMinotaur.Controllers
 {
-    //[Authorize(AuthenticationSchemes = "Bearer,Identity.Application")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer,Identity.Application")]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DevicesController : ControllerBase
@@ -41,11 +41,10 @@ namespace WebMinotaur.Controllers
         // GET: api/Devices
         [HttpGet]
         [Route("userdevices/{id}")]
-        public async Task<ActionResult<IEnumerable<Device>>> GetDevices(string id)
+        public async Task<ActionResult<List<Device>>> GetDevices(string id)
         {
-            
-
-            return await _context.Devices.ToListAsync();
+            Console.WriteLine("ID entered {id}");
+            return await _dr.GetDevicesAsyncByUserId(id);
         }
 
         // GET: api/Devices/5
