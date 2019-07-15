@@ -7,14 +7,82 @@
 @inject IJSRuntime jsr
 
 <h3>Devices</h3>
+<hr />
+<div class="container">
+    <h4>Registered devices</h4>
+    @if (devices == null)
+    {
+        <div>
+            <p>No devices registered add device name & description.</p>
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">Device Name</th>
+                    <th scope="col">Desc</th>
+                    <th scope="col">Last Knew IP Addrr</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in devices)
+                {
+                    <tr>
+                        <td>@d.Name</td>
+                        <td>@d.Description</td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <div class="btn btn-group">
+                                <button class="btn btn-outline-primary">Show Tokens</button>
+                                <button class="btn btn-outline-secondary">Details</button>
+                                <button class="btn btn-outline-danger">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<br />
+<div class="container">
+    <h4>Adding Device</h4>
+    <div>
 
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3" @bind="@device.Name">Name</label>
+                <input class="form-control col-md-3" @bind="@device.Description" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Description</label>
+                <textarea class="form-control col-md-3"></textarea>
+            </div>
+        </div>
+        <button class="row btn btn-outline-success">Add</button>
+    </div>
+</div>
 @code
 {
 [CascadingParameter]
 Task<AuthenticationState> authenticationStateTask { get; set; }
 string userId;
 AppUser user;
-List<Device> devices;
+Device device = new Device();
+List<Device> devices = new List<Device>()
+    {
+        new Device{Name ="Htc", Description="Carole EMP"},
+        new Device {Name ="HP U450", Description="HP Home Server Dyn DNS" }
+    };
+
+
 
 protected override async Task OnInitAsync()
 {
@@ -30,12 +98,20 @@ async Task LogUsername()
         // Since the user is a ClaimsPrincipal, you can also enumerate claims,
         // evaluate membership in roles, etc.
         Console.WriteLine($"Hello, {user.Identity.Name}");
-        
 
     }
     else
     {
         Console.WriteLine("You're not logged in.");
     }
+}
+
+private async Task addDevice()
+{
+
+}
+private async Task refreshDevice()
+{
+
 }
 }
