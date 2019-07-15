@@ -73,9 +73,11 @@
 {
 [CascadingParameter]
 Task<AuthenticationState> authenticationStateTask { get; set; }
+
 string userId;
 AppUser user;
 Device device = new Device();
+
 List<Device> devices = new List<Device>()
     {
         new Device{Name ="Htc", Description="Carole EMP"},
@@ -87,6 +89,8 @@ List<Device> devices = new List<Device>()
 protected override async Task OnInitAsync()
 {
     await LogUsername();
+    await setUserId();
+    //await refreshDevices();
 
 }
 async Task LogUsername()
@@ -110,8 +114,15 @@ private async Task addDevice()
 {
 
 }
-private async Task refreshDevice()
+private async Task refreshDevices()
 {
-
+    devices = await devicesService.GetUserDevices(userId);
+}
+private async Task setUserId()
+{
+    var authState = await authenticationStateTask;
+    var user = authState.User;
+    userId = userAuthService.GetUserId(user);
+    Console.WriteLine($"User ID IS = {userId}");
 }
 }
