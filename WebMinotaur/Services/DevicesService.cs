@@ -18,17 +18,18 @@ namespace WebMinotaur.Services
         }
         public void AddDevice(string userid, Device device)
         {
+
             throw new NotImplementedException();
         }
 
-        public async Task CreateUserDeviceAsync(string userid)
+        public Task CreateUserDeviceAsync(string userid)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<Device>> GetUserDevices(string userid)
+        public async Task<List<Device>> GetUserDevicesAsync(string userid)
         {
-            return await client.GetJsonAsync<List<Device>>(client.BaseAddress+"api/");
+            return await client.GetJsonAsync<List<Device>>(client.BaseAddress+ "api/Devices/userdevices/" + userid);
         }
 
         public void RemoveDevice(string userid, int deviceId)
