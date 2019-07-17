@@ -43,5 +43,9 @@ namespace WebMinotaur.Services
             return new JwtSecurityTokenHandler().ReadJwtToken(tokenString);
         }
 
+        public bool IsValid(string tokenString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
