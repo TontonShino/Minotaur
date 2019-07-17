@@ -3,13 +3,13 @@
 
 @inject IDevicesService devicesService
 @inject IUserAuthService userAuthService
-
+@inject IDevicesRepository deviceRepo
 
 <h3>Devices</h3>
 <hr />
 <div class="container">
     <h4>Registered devices</h4>
-    @if (devices == null)
+    @if (devices.Count == 0)
     {
         <div>
             <p>No devices registered add device name & description.</p>
@@ -17,117 +17,131 @@
     }
     else
     {
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th scope="col">Device Name</th>
-                    <th scope="col">Desc</th>
-                    <th scope="col">Last Knew IP Addrr</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var d in devices)
-                {
+        <div class="table-responsive-sm">
+            <table class="table table-sm table-hover">
+                <thead>
                     <tr>
-                        <td>@d.Name</td>
-                        <td>@d.Description</td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <div class="btn btn-group">
-                                <button class="btn btn-outline-primary">Show Tokens</button>
-                                <button class="btn btn-outline-secondary">Details</button>
-                                <button class="btn btn-outline-danger">Delete</button>
-                            </div>
-                        </td>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Desc</th>
+                        <th scope="col">Creation Date</th>
+                        <th scope="col">Last Update</th>
+                        <th scope="col">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var d in devices)
+                    {
+                        <tr>
+                            <th scope="col">@d.Id</th>
+                            <td>@d.Name</td>
+                            <td>@d.Description</td>
+                            <td>@d.CreationDate</td>
+                            <td>@d.LastUpdateDate</td>
+                            <td>
+                                <div class="btn btn-group">
+                                    <button class="btn btn-outline-primary">Show Tokens</button>
+                                    <button class="btn btn-outline-secondary">Details</button>
+                                    <button class="btn btn-outline-danger" @onclick="@(async () => await RemoveDeviceAsync(@d.Id))">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
     }
 </div>
 <br />
-<div class="container">
-    <h4>Device Editor</h4>
-    <div>
+<div class="row col-12">
+    <div class="col-3"></div>
 
-        <div class="form-group">
-            <div class="row">
-                <label class="col-md-3" @bind="@device.Name">Name</label>
-                <input class="form-control col-md-3" @bind="@device.Description" />
+    <div class="container col-6">
+        <h4>Device Editor</h4>
+        <div>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <label class="col">Name</label>
+                    <input class="form-control col" @bind="@device.Name" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <label class="col-md-3">Description</label>
-                <textarea class="form-control col-md-3"></textarea>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <label class="col">Description</label>
+                    <textarea class="form-control col" @bind="@device.Description"></textarea>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="align-items-end">
-                <button class="col btn btn-outline-success">Add</button>
+
+            <div class="row align-items-center">
+                <button class="btn btn-outline-success col" @onclick="@(async () => await addDevice())">Add</button>
             </div>
+
         </div>
     </div>
+    <div class="col-3"></div>
 </div>
 @code
 {
 
-[CascadingParameter]
-Task<AuthenticationState> authenticationStateTask { get; set; }
+    [CascadingParameter]
+    Task<AuthenticationState> authenticationStateTask { get; set; }
 
-string userId;
-AppUser user;
-Device device = new Device();
-
-List<Device> devices = new List<Device>()
-{
-        new Device{Name ="Htc", Description="Carole EMP"},
-        new Device {Name ="HP U450", Description="HP Home Server Dyn DNS" }
-    };
+    string userId;
+    Device device = new Device();
+    List<Device> devices;
 
 
 
-protected override async Task OnInitAsync()
-{
-    await LogUsername();
-    await setUserId();
-    await refreshDevices();
-
-}
-async Task LogUsername()
-{
-    var authState = await authenticationStateTask;
-    var user = authState.User;
-    if (user.Identity.IsAuthenticated)
+    protected override async Task OnInitAsync()
     {
-        // Since the user is a ClaimsPrincipal, you can also enumerate claims,
-        // evaluate membership in roles, etc.
-        Console.WriteLine($"Hello, {user.Identity.Name}");
+
+        await LogUsername();
+        await setUserId();
+        await refreshDevices();
+
 
     }
-    else
+    async Task LogUsername()
     {
-        Console.WriteLine("You're not logged in.");
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            // Since the user is a ClaimsPrincipal, you can also enumerate claims,
+            // evaluate membership in roles, etc.
+            Console.WriteLine($"Hello, {user.Identity.Name}");
+
+        }
+        else
+        {
+            Console.WriteLine("You're not logged in.");
+        }
     }
-}
 
-private async Task addDevice()
-{
-
-}
-private async Task refreshDevices()
-{
-    devices = await devicesService.GetUserDevicesAsync(userId) ?? null;
-}
-private async Task setUserId()
-{
-    var authState = await authenticationStateTask;
-    var user = authState.User;
-    userId = userAuthService.GetUserId(user);
-    Console.WriteLine($"User ID IS = {userId}");
-}
+    private async Task addDevice()
+    {
+        Console.WriteLine($"The device values Name={device.Name} , Description={device.Description} , UserId ={device.AppUserId}");
+        await deviceRepo.AddDeviceAsync(device);
+        device = new Device { AppUserId = userId };
+        await refreshDevices();
+    }
+    private async Task refreshDevices()
+    {
+        devices = await deviceRepo.GetDevicesAsyncByUserId(userId) ?? null;
+    }
+    private async Task setUserId()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+        userId = userAuthService.GetUserId(user);
+        Console.WriteLine($"User ID IS = {userId}");
+        device.AppUserId = userId;
+    }
+    private async Task RemoveDeviceAsync(string id)
+    {
+        await deviceRepo.DeleteDeviceAsync(id);
+        await refreshDevices();
+    }
 
 }

@@ -18,13 +18,23 @@ namespace WebMinotaur.Repositories
         }
         public Device AddDevice(Device device)
         {
-            db.Devices.Add(device);
+            var d = new Device
+            {
+                AppUserId = device.AppUserId,
+                Name = device.Name,
+                Description = device.Description,
+                CreationDate = DateTime.UtcNow,
+                LastUpdateDate = DateTime.UtcNow
+            };
+            db.Devices.Add(d);
             db.SaveChanges();
-            return device;
+            return d;
         }
 
         public async Task<Device> AddDeviceAsync(Device device)
         {
+            device.CreationDate = DateTime.UtcNow;
+            device.LastUpdateDate = DateTime.UtcNow;
             await db.Devices.AddAsync(device);
             await db.SaveChangesAsync();
             return device;
