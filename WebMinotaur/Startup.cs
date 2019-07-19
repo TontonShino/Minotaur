@@ -22,7 +22,7 @@ using SharedLib.IRepositories;
 using WebMinotaur.Repositories;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
-
+using EmbeddedBlazorContent;
 
 namespace WebMinotaur
 {
@@ -59,7 +59,7 @@ namespace WebMinotaur
             services.AddTransient<IDeviceTokensRepository, DeviceTokensRepository>();
             services.AddTransient<IDevicesService, DevicesService>();
             services.AddTransient<IUserAuthService, UserAuthService>();
-
+            
             services.AddAuthentication(/*options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -122,6 +122,8 @@ namespace WebMinotaur
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

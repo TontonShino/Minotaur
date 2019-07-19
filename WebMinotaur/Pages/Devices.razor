@@ -1,9 +1,11 @@
 @page "/devices"
 @attribute [Authorize]
+@using MatBlazor
 
 @inject IDevicesService devicesService
 @inject IUserAuthService userAuthService
 @inject IDevicesRepository deviceRepo
+@inject IUriHelper uriHelper
 
 <h3>Devices</h3>
 <hr />
@@ -41,7 +43,7 @@
                             <td>
                                 <div class="btn btn-group">
                                     <button class="btn btn-outline-primary">Show Tokens</button>
-                                    <button class="btn btn-outline-secondary">Details</button>
+                                    <button class="btn btn-outline-secondary" @onclick="@(() => DeviceDetails(@d))">Details</button>
                                     <button class="btn btn-outline-danger" @onclick="@(async () => await RemoveDeviceAsync(@d.Id))">Delete</button>
                                 </div>
                             </td>
@@ -51,7 +53,31 @@
                 </tbody>
             </table>
         </div>
+
+        <br />
+        <div>
+            <MatTable Items="@devices">
+                <MatTableHeader>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Id</td>
+                    <td>@context.Name</td>
+                    <td>
+                        <MatButton>Show Tokens</MatButton>
+                        <MatButton @onclick="@(() => DeviceDetails(context))">Details</MatButton>
+                        <MatButton  @onclick="@(async () => await RemoveDeviceAsync(context.Id))">Delete</MatButton>
+                    </td>
+                </MatTableRow>
+            </MatTable>
+        </div>
+        <br />
     }
+</div>
+<div class="container">
+    <devicedetails device="@deviceDetails"/>
 </div>
 <br />
 <div class="row col-12">
@@ -89,6 +115,7 @@
 
     string userId;
     Device device = new Device();
+    Device deviceDetails;
     List<Device> devices;
 
 
@@ -142,6 +169,11 @@
     {
         await deviceRepo.DeleteDeviceAsync(id);
         await refreshDevices();
+    }
+
+    private void DeviceDetails(Device device)
+    {
+        deviceDetails = device;
     }
 
 }
