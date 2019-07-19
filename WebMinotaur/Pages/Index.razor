@@ -1,9 +1,5 @@
 ﻿@page "/"
 
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-
-
-
 <h1>Welcome to Minotaur</h1>
 <AuthorizeView>
     <Authorized>
@@ -13,13 +9,3 @@
         You need to be logged on to acces to the monitoring
     </NotAuthorized>
 </AuthorizeView>
-
-@code
-{ protected override async Task OnInitAsync()
-{
-    var authToken =
-    HttpContextAccessor.HttpContext.Request.Cookies[".AspNetCore.Identity.Application"];
-
-    Console.WriteLine($"Auth Token = {authToken}");
-}
-}
