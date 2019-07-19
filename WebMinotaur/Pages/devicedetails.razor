@@ -1,0 +1,23 @@
+
+<br />
+
+TODO: Complete details of device
+
+<h3>Device details</h3>
+@if (device != null)
+{
+    <p>@device?.Name</p>
+    <p>@device?.CreationDate</p>
+    <p>Number of tokens : @device.TokenDevices?.Count</p>
+}
+@if(device == null)
+{
+    <p>Select a device</p>
+}
+<br />
+@code {
+
+    [Parameter]
+    Device device { get; set; }
+
+}
