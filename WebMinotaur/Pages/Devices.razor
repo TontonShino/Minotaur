@@ -1,11 +1,15 @@
 @page "/devices"
+
 @attribute [Authorize]
 @using MatBlazor
 
 @inject IDevicesService devicesService
 @inject IUserAuthService userAuthService
+@inject ITokenService tokenService
 @inject IDevicesRepository deviceRepo
 @inject IUriHelper uriHelper
+@inject IDeviceTokensRepository deviceTokensRepository
+
 
 <h3>Devices</h3>
 <hr />
@@ -19,41 +23,6 @@
     }
     else
     {
-        <div class="table-responsive-sm">
-            <table class="table table-sm table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Desc</th>
-                        <th scope="col">Creation Date</th>
-                        <th scope="col">Last Update</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var d in devices)
-                    {
-                        <tr>
-                            <th scope="col">@d.Id</th>
-                            <td>@d.Name</td>
-                            <td>@d.Description</td>
-                            <td>@d.CreationDate</td>
-                            <td>@d.LastUpdateDate</td>
-                            <td>
-                                <div class="btn btn-group">
-                                    <button class="btn btn-outline-primary">Show Tokens</button>
-                                    <button class="btn btn-outline-secondary" @onclick="@(() => DeviceDetails(@d))">Details</button>
-                                    <button class="btn btn-outline-danger" @onclick="@(async () => await RemoveDeviceAsync(@d.Id))">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
-
         <br />
         <div>
             <MatTable Items="@devices">
@@ -66,9 +35,10 @@
                     <td>@context.Id</td>
                     <td>@context.Name</td>
                     <td>
-                        <MatButton>Show Tokens</MatButton>
-                        <MatButton @onclick="@(() => DeviceDetails(context))">Details</MatButton>
-                        <MatButton  @onclick="@(async () => await RemoveDeviceAsync(context.Id))">Delete</MatButton>
+                        <MatButton Outlined="true">Edit</MatButton>
+                        <MatButton Outlined="true">Show Tokens</MatButton>
+                        <MatButton Outlined="true" @onclick="@(() => DeviceDetails(context))">Details</MatButton>
+                        <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(context.Id))">Delete</MatButton>
                     </td>
                 </MatTableRow>
             </MatTable>
@@ -77,103 +47,86 @@
     }
 </div>
 <div class="container">
-    <devicedetails device="@deviceDetails"/>
+    <devicedetails device="@deviceDetails" />
 </div>
 <br />
-<div class="row col-12">
-    <div class="col-3"></div>
 
-    <div class="container col-6">
-        <h4>Device Editor</h4>
-        <div>
-            <div class="form-group">
-                <div class="row align-items-center">
-                    <label class="col">Name</label>
-                    <input class="form-control col" @bind="@device.Name" />
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row align-items-center">
-                    <label class="col">Description</label>
-                    <textarea class="form-control col" @bind="@device.Description"></textarea>
-                </div>
-            </div>
-
-            <div class="row align-items-center">
-                <button class="btn btn-outline-success col" @onclick="@(async () => await addDevice())">Add</button>
-            </div>
-
-        </div>
-    </div>
-    <div class="col-3"></div>
+<div class="container">
+    <devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" />
 </div>
+
 @code
 {
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
-
+    string username;
     string userId;
-    Device device = new Device();
+    Device deviceEdit = new Device();
     Device deviceDetails;
     List<Device> devices;
-
-
 
     protected override async Task OnInitAsync()
     {
 
-        await LogUsername();
         await setUserId();
         await refreshDevices();
-
-
-    }
-    async Task LogUsername()
-    {
-        var authState = await authenticationStateTask;
-        var user = authState.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            // Since the user is a ClaimsPrincipal, you can also enumerate claims,
-            // evaluate membership in roles, etc.
-            Console.WriteLine($"Hello, {user.Identity.Name}");
-
-        }
-        else
-        {
-            Console.WriteLine("You're not logged in.");
-        }
     }
 
-    private async Task addDevice()
+    async Task addDevice()
     {
-        Console.WriteLine($"The device values Name={device.Name} , Description={device.Description} , UserId ={device.AppUserId}");
-        await deviceRepo.AddDeviceAsync(device);
-        device = new Device { AppUserId = userId };
+        await deviceRepo.AddDeviceAsync(deviceEdit);
+
+
+        //Generate tokens
+        var token = tokenService.GenerateTokenDevice(username);
+        //Register tokens (db)
+        var tkd = new DeviceToken
+        {
+            Id = token.ToString(),
+            DeviceId = deviceEdit.Id,
+            Enabled = true,
+            CreationDate = DateTime.UtcNow,
+            ExpirationDate = token.ValidTo
+        };
+
+        await deviceTokensRepository.CreateAsync(tkd);
         await refreshDevices();
+        deviceEdit = new Device { AppUserId = userId };
     }
-    private async Task refreshDevices()
+    async Task refreshDevices()
     {
         devices = await deviceRepo.GetDevicesAsyncByUserId(userId) ?? null;
     }
-    private async Task setUserId()
+    async Task setUserId()
     {
         var authState = await authenticationStateTask;
+        username = authState.User.Identity.Name;
         var user = authState.User;
         userId = userAuthService.GetUserId(user);
-        Console.WriteLine($"User ID IS = {userId}");
-        device.AppUserId = userId;
+        deviceEdit.AppUserId = userId;
     }
-    private async Task RemoveDeviceAsync(string id)
+    async Task RemoveDeviceAsync(string id)
     {
         await deviceRepo.DeleteDeviceAsync(id);
         await refreshDevices();
     }
 
-    private void DeviceDetails(Device device)
+    void DeviceDetails(Device device)
     {
         deviceDetails = device;
     }
+    async Task createTokenDeviceAsync()
+    {
 
+    }
+    async Task ChildValidatedDevice()
+    {
+
+    }
+    async Task ValidateDevice()
+    {
+        await addDevice();
+
+    }
 }
