@@ -47,5 +47,10 @@ namespace WebMinotaur.Services
         {
             throw new NotImplementedException();
         }
+
+        public string IntoString(JwtSecurityToken token)
+        {
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
