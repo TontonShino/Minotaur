@@ -22,6 +22,9 @@ namespace SharedLib.IRepositories
         //GetAll
         IEnumerable<DeviceToken> GetAll();
         Task<IEnumerable<DeviceToken>> GetAllAsync();
+
+        IEnumerable<DeviceToken> GetAllByUserId(string userId);
+        Task<IEnumerable<DeviceToken>> GetAllByUserIdAsync(string userId);
         //Revoke
         void Revoke(string id);
         void RevokeAsync(string id);

@@ -58,6 +58,10 @@ namespace WebMinotaur.Repositories
 
             if (device != null)
             {
+                var infoIps = db.InfoIP.Where(d => d.DeviceId == id);
+                db.InfoIP.RemoveRange(infoIps);
+                var TokenDevices = db.DeviceTokens.Where(d => d.DeviceId == id);
+                db.DeviceTokens.RemoveRange(TokenDevices);
                 db.Devices.Remove(device);
                 await db.SaveChangesAsync();
             }
@@ -75,11 +79,13 @@ namespace WebMinotaur.Repositories
 
         public List<Device> GetDevicesByUserId(string userid)
         {
+            //return db.Devices.Where(u => u.AppUserId == userid).ToList();
             return db.Devices.Where(u => u.AppUserId == userid).ToList();
         }
 
         public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
         {
+            //return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.TokenDevices).ToListAsync();
             return await db.Devices.Where(u => u.AppUserId == userid).ToListAsync();
             
         }

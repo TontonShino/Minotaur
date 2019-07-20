@@ -44,6 +44,17 @@ namespace WebMinotaur.Repositories
             throw new NotImplementedException();
         }
 
+        public IEnumerable<DeviceToken> GetAllByUserId(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<DeviceToken>> GetAllByUserIdAsync(string userId)
+        {
+            
+            throw new NotImplementedException();
+        }
+
         public Task<DeviceToken> GetAsync(string id)
         {
             throw new NotImplementedException();
