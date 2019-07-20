@@ -19,6 +19,7 @@ namespace WebMinotaur.Data
         public virtual DbSet<InfoIP> InfoIP { get; set; }
         public virtual DbSet<DeviceToken> DeviceTokens { get; set; }
 
+        //TODO: onmodel creating disable default identity entities aspnetuser ...
 
     }
 }

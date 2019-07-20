@@ -12,10 +12,15 @@ namespace SharedLib
         public string Description { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastUpdateDate { get; set; }
-        public List<InfoIP> InfoIP { get; set; }
-        public List<DeviceToken> TokenDevices { get; set; }
+        public virtual ICollection<InfoIP> InfoIP { get; set; }
+        public virtual ICollection<DeviceToken> TokenDevices { get; set; }
         public AppUser AppUser { get; set; }
         public string AppUserId { get; set; }
+        public Device()
+        {
+            this.TokenDevices = new HashSet<DeviceToken>();
+            this.InfoIP = new HashSet<InfoIP>();
+        }
         
     }
 }

@@ -7,8 +7,15 @@ namespace SharedLib
 {
     public class AppUser : IdentityUser
     {
-        public List<Device> Devices { get; set; }
-        public List<AppUserToken> appUserTokens { get; set; }
+
+        public virtual ICollection<Device> Devices { get; set; }
+        public virtual ICollection<AppUserToken> AppUserTokens { get; set; }
+
+        public AppUser()
+        {
+            this.Devices = new HashSet<Device>();
+            this.AppUserTokens = new HashSet<AppUserToken>();
+        }
 
     }
 }
