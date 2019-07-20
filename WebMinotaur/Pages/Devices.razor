@@ -7,13 +7,11 @@
 @inject IUserAuthService userAuthService
 @inject ITokenService tokenService
 @inject IDevicesRepository deviceRepo
-@inject IUriHelper uriHelper
 @inject IDeviceTokensRepository deviceTokensRepository
-
 
 <h3>Devices</h3>
 <hr />
-<div class="container">
+<div>
     <h4>Registered devices</h4>
     @if (devices.Count == 0)
     {
@@ -25,7 +23,7 @@
     {
         <br />
         <div>
-            <MatTable Items="@devices">
+            <MatTable Items="@devices" Striped="true">
                 <MatTableHeader>
                     <th>ID</th>
                     <th>Name</th>
@@ -36,9 +34,9 @@
                     <td>@context.Name</td>
                     <td>
                         <MatButton Outlined="true">Edit</MatButton>
-                        <MatButton Outlined="true">Show Tokens</MatButton>
+                        <MatButton Outlined="true">Tokens</MatButton>
                         <MatButton Outlined="true" @onclick="@(() => DeviceDetails(context))">Details</MatButton>
-                        <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(context.Id))">Delete</MatButton>
+                        <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(@context.Id))">Delete</MatButton>
                     </td>
                 </MatTableRow>
             </MatTable>
@@ -46,25 +44,27 @@
         <br />
     }
 </div>
-<div class="container">
-    <devicedetails device="@deviceDetails" />
-</div>
+
+<devicedetails device="@deviceDetails" />
+
 <br />
 
-<div class="container">
-    <devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" />
-</div>
+
+<devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" />
+
 
 @code
 {
 
+
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
-    string username;
-    string userId;
+    string username { get; set; }
+    string userId { get; set; }
     Device deviceEdit = new Device();
-    Device deviceDetails;
-    List<Device> devices;
+    Device deviceDetails { get; set; }
+    List<Device> devices { get; set; }
+    FormMode mode = FormMode.Create;
 
     protected override async Task OnInitAsync()
     {
@@ -77,20 +77,19 @@
     {
         await deviceRepo.AddDeviceAsync(deviceEdit);
 
-
         //Generate tokens
         var token = tokenService.GenerateTokenDevice(username);
         //Register tokens (db)
-        var tkd = new DeviceToken
+        var deviceToken = new DeviceToken
         {
-            Id = token.ToString(),
+            Id = tokenService.IntoString(token),
             DeviceId = deviceEdit.Id,
             Enabled = true,
             CreationDate = DateTime.UtcNow,
             ExpirationDate = token.ValidTo
         };
 
-        await deviceTokensRepository.CreateAsync(tkd);
+        await deviceTokensRepository.CreateAsync(deviceToken);
         await refreshDevices();
         deviceEdit = new Device { AppUserId = userId };
     }
