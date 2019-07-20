@@ -9,7 +9,7 @@ using WebMinotaur.Data;
 namespace WebMinotaur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190712092339_Init")]
+    [Migration("20190720152755_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,13 +177,37 @@ namespace WebMinotaur.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("SharedLib.Device", b =>
+            modelBuilder.Entity("SharedLib.AppUserToken", b =>
                 {
                     b.Property<string>("Id");
 
                     b.Property<string>("AppUserId");
 
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<DateTime>("ExpirationDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("AppUserToken");
+                });
+
+            modelBuilder.Entity("SharedLib.Device", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AppUserId");
+
+                    b.Property<DateTime>("CreationDate");
+
                     b.Property<string>("Description");
+
+                    b.Property<DateTime>("LastUpdateDate");
 
                     b.Property<string>("Name");
 
@@ -200,15 +224,15 @@ namespace WebMinotaur.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("DeviceId");
+                    b.Property<string>("DeviceId");
 
-                    b.Property<string>("DeviceId1");
+                    b.Property<bool>("Enabled");
 
                     b.Property<DateTime>("ExpirationDate");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId1");
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("DeviceTokens");
                 });
@@ -282,6 +306,13 @@ namespace WebMinotaur.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SharedLib.AppUserToken", b =>
+                {
+                    b.HasOne("SharedLib.AppUser", "AppUser")
+                        .WithMany("AppUserTokens")
+                        .HasForeignKey("AppUserId");
+                });
+
             modelBuilder.Entity("SharedLib.Device", b =>
                 {
                     b.HasOne("SharedLib.AppUser", "AppUser")
@@ -293,7 +324,7 @@ namespace WebMinotaur.Migrations
                 {
                     b.HasOne("SharedLib.Device", "Device")
                         .WithMany("TokenDevices")
-                        .HasForeignKey("DeviceId1");
+                        .HasForeignKey("DeviceId");
                 });
 
             modelBuilder.Entity("SharedLib.InfoIP", b =>

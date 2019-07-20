@@ -68,6 +68,27 @@ namespace WebMinotaur.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppUserToken",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    ExpirationDate = table.Column<DateTime>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    AppUserId = table.Column<string>(nullable: true),
+                    Enabled = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUserToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppUserToken_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -159,6 +180,8 @@ namespace WebMinotaur.Migrations
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    LastUpdateDate = table.Column<DateTime>(nullable: false),
                     AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -179,15 +202,15 @@ namespace WebMinotaur.Migrations
                     Id = table.Column<string>(nullable: false),
                     ExpirationDate = table.Column<DateTime>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
-                    DeviceId1 = table.Column<string>(nullable: true),
-                    DeviceId = table.Column<int>(nullable: false)
+                    DeviceId = table.Column<string>(nullable: true),
+                    Enabled = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceTokens_Devices_DeviceId1",
-                        column: x => x.DeviceId1,
+                        name: "FK_DeviceTokens_Devices_DeviceId",
+                        column: x => x.DeviceId,
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -213,6 +236,11 @@ namespace WebMinotaur.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppUserToken_AppUserId",
+                table: "AppUserToken",
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -257,9 +285,9 @@ namespace WebMinotaur.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceTokens_DeviceId1",
+                name: "IX_DeviceTokens_DeviceId",
                 table: "DeviceTokens",
-                column: "DeviceId1");
+                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InfoIP_DeviceId",
@@ -269,6 +297,9 @@ namespace WebMinotaur.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppUserToken");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

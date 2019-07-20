@@ -222,9 +222,7 @@ namespace WebMinotaur.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<int>("DeviceId");
-
-                    b.Property<string>("DeviceId1");
+                    b.Property<string>("DeviceId");
 
                     b.Property<bool>("Enabled");
 
@@ -232,7 +230,7 @@ namespace WebMinotaur.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId1");
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("DeviceTokens");
                 });
@@ -309,7 +307,7 @@ namespace WebMinotaur.Migrations
             modelBuilder.Entity("SharedLib.AppUserToken", b =>
                 {
                     b.HasOne("SharedLib.AppUser", "AppUser")
-                        .WithMany("appUserTokens")
+                        .WithMany("AppUserTokens")
                         .HasForeignKey("AppUserId");
                 });
 
@@ -324,7 +322,7 @@ namespace WebMinotaur.Migrations
                 {
                     b.HasOne("SharedLib.Device", "Device")
                         .WithMany("TokenDevices")
-                        .HasForeignKey("DeviceId1");
+                        .HasForeignKey("DeviceId");
                 });
 
             modelBuilder.Entity("SharedLib.InfoIP", b =>
