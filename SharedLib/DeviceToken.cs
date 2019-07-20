@@ -10,7 +10,7 @@ namespace SharedLib
         public DateTime ExpirationDate { get; set; }
         public DateTime CreationDate { get; set; }
         public Device Device { get; set; }
-        public int DeviceId { get; set; }
+        public string DeviceId { get; set; }
         public bool Enabled { get; set; }
     }
 }
