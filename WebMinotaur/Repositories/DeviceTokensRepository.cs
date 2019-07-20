@@ -4,19 +4,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebMinotaur.Data;
 
 namespace WebMinotaur.Repositories
 {
     public class DeviceTokensRepository : IDeviceTokensRepository
     {
+        private readonly ApplicationDbContext db;
+        public DeviceTokensRepository(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
         public DeviceToken Create(DeviceToken tokendevice)
         {
-            throw new NotImplementedException();
+            db.Add(tokendevice);
+            db.SaveChanges();
+            return tokendevice;
         }
 
-        public Task<DeviceToken> CreateAsync(DeviceToken tokenDevice)
+        public async Task<DeviceToken> CreateAsync(DeviceToken tokenDevice)
         {
-            throw new NotImplementedException();
+            db.DeviceTokens.Add(tokenDevice);
+            await db.SaveChangesAsync();
+            return tokenDevice;
         }
 
         public DeviceToken Get(string id)
