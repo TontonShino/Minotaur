@@ -1,6 +1,6 @@
 namespace SharedLib
 {
-    enum FormMode
+    public enum FormMode
     {
         Create,
         Edit
