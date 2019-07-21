@@ -9,7 +9,7 @@ using WebMinotaur.Data;
 namespace WebMinotaur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190720152755_Init")]
+    [Migration("20190721083229_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
