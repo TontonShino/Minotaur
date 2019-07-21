@@ -1,4 +1,5 @@
-﻿using SharedLib;
+﻿using Microsoft.EntityFrameworkCore;
+using SharedLib;
 using SharedLib.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -34,24 +35,33 @@ namespace WebMinotaur.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DeviceToken> GetAll()
+        public List<DeviceToken> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<DeviceToken>> GetAllAsync()
+        public Task<List<DeviceToken>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DeviceToken> GetAllByUserId(string userId)
+        public List<DeviceToken> GetAllByUserId(string userId)
         {
-            throw new NotImplementedException();
+            var devices = db.Devices.Where(u => u.AppUserId == userId).Include(t => t.TokenDevices);
+            List<DeviceToken> tkds = new List<DeviceToken>();
+            foreach (var d in devices)
+            {
+                foreach (var tk in d.TokenDevices)
+                {
+                    tkds.Add(tk);
+                }
+            }
+            return tkds;
         }
 
-        public Task<IEnumerable<DeviceToken>> GetAllByUserIdAsync(string userId)
+        public async Task<List<DeviceToken>> GetAllByUserIdAsync(string userId)
         {
-            
+            //var device =  await db.Devices.Where(u => u.AppUserId == userId).Include(t => t.TokenDevices).ToListAsync()
             throw new NotImplementedException();
         }
 
@@ -60,7 +70,7 @@ namespace WebMinotaur.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DeviceToken> GetValidsToken(string deviceid)
+        public List<DeviceToken> GetValidsToken(string deviceid)
         {
             throw new NotImplementedException();
         }
