@@ -1,4 +1,5 @@
 @page "/devicestk"
+@using MatBlazor
 
 @attribute [Authorize]
 
@@ -6,8 +7,25 @@
 @inject IDeviceTokensRepository deviceTokensRepository
 
 <h3>Tokens</h3>
-
-
+<p>Number of Device Tokens : @deviceTokens.Count</p>
+<div class="container">
+    <MatTable Items="@deviceTokens">
+        <MatTableHeader>
+            <th>Token Value</th>
+            <th>Device ID</th>
+            <th>Enabled</th>
+            <th>Expiration</th>
+            <th>Actions</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Id</td>
+            <td>@context.DeviceId</td>
+            <td>@context.Enabled</td>
+            <td>@context.ExpirationDate</td>
+            <td></td>
+        </MatTableRow>
+    </MatTable>
+</div>
 @code {
     [CascadingParameter]
     Task<AuthenticationState> authState { get; set; }
@@ -15,10 +33,22 @@
 
     string userId { get; set; }
     string username { get; set; }
+    List<DeviceToken> deviceTokens { get; set; } = new List<DeviceToken>();
 
     protected override async Task OnInitAsync()
     {
+        await setUserId();
+        refreshDeviceTokenList();
+    }
+    async Task setUserId()
+    {
         var taskAuth = await authState;
+        var user = taskAuth.User;
         username = taskAuth.User.Identity.Name;
+        userId = userAuthService.GetUserId(user);
+    }
+    void refreshDeviceTokenList()
+    {
+        deviceTokens = deviceTokensRepository.GetAllByUserId(userId);
     }
 }
