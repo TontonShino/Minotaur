@@ -20,16 +20,16 @@ namespace SharedLib.IRepositories
         void Remove(string id);
         Task RemoveAsync(string id);
         //GetAll
-        IEnumerable<DeviceToken> GetAll();
-        Task<IEnumerable<DeviceToken>> GetAllAsync();
+        List<DeviceToken> GetAll();
+        Task<List<DeviceToken>> GetAllAsync();
 
-        IEnumerable<DeviceToken> GetAllByUserId(string userId);
-        Task<IEnumerable<DeviceToken>> GetAllByUserIdAsync(string userId);
+        List<DeviceToken> GetAllByUserId(string userId);
+        Task<List<DeviceToken>> GetAllByUserIdAsync(string userId);
         //Revoke
         void Revoke(string id);
         void RevokeAsync(string id);
         //GetValidsTokens
-        IEnumerable<DeviceToken> GetValidsToken(string deviceid);
+        List<DeviceToken> GetValidsToken(string deviceid);
         //IsEnabled
         bool IsEnabled(string token);
     }
