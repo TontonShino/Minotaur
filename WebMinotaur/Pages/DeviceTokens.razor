@@ -1,5 +1,5 @@
 @page "/devicestk"
-@using MatBlazor
+
 
 @attribute [Authorize]
 
@@ -7,28 +7,55 @@
 @inject IDeviceTokensRepository deviceTokensRepository
 
 <h3>Tokens</h3>
-<p>Number of Device Tokens : @deviceTokens.Count</p>
+
 <div class="container">
-    <MatTable Items="@deviceTokens">
-        <MatTableHeader>
-            <th>Token Value</th>
-            <th>Device ID</th>
-            <th>Enabled</th>
-            <th>Expiration</th>
-            <th>Actions</th>
-        </MatTableHeader>
-        <MatTableRow>
-            <td>@context.Id</td>
-            <td>@context.DeviceId</td>
-            <td>@context.Enabled</td>
-            <td>@context.ExpirationDate</td>
-            <td></td>
-        </MatTableRow>
-    </MatTable>
+    <div class="table-responsive">
+        <MatTable Items="@deviceTokens">
+            <MatTableHeader>
+                <th>Device ID</th>
+                <th>Enabled</th>
+                <th>Expiration</th>
+                <th>Actions</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.DeviceId</td>
+                <td>@context.Enabled</td>
+                <td>@context.ExpirationDate</td>
+                <td>
+                    <MatButton Outlined="true" @onclick="@(() => setTokenToShow(@context.Id) )">Show</MatButton>
+                    @if (context.Enabled == true)
+                    {
+                        <MatButton Outlined="true">Disable</MatButton>
+                    }
+                    else if (context.Enabled == false)
+                    {
+                        <MatButton Outlined="true">Enable</MatButton>
+                    }
+                    <MatButton Outlined="true">Remove</MatButton>
+
+                </td>
+            </MatTableRow>
+        </MatTable>
+    </div>
+    <MatDialog @bind-IsOpen="@showTokenDialog">
+        <MatDialogContent>
+            <p>This is your JWT Token</p>
+            <MatCard>
+                <p>@tokenValue</p>
+            </MatCard>
+            <MatTextField @bind-Value="@tokenValue" Disabled="true"/>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton @onclick="@closeTokenDialog">Close</MatButton>
+        </MatDialogActions>
+    </MatDialog>
 </div>
 @code {
     [CascadingParameter]
     Task<AuthenticationState> authState { get; set; }
+
+    bool showTokenDialog { get; set; } = false;
+    string tokenValue { get; set; }
 
 
     string userId { get; set; }
@@ -50,5 +77,18 @@
     void refreshDeviceTokenList()
     {
         deviceTokens = deviceTokensRepository.GetAllByUserId(userId);
+    }
+    void setTokenToShow(string tk)
+    {
+        tokenValue = tk;
+        openTokenDialog();
+    }
+    void openTokenDialog()
+    {
+        showTokenDialog = true;
+    }
+    void closeTokenDialog()
+    {
+        showTokenDialog = false;
     }
 }
