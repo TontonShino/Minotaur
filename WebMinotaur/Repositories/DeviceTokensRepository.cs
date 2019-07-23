@@ -32,17 +32,11 @@ namespace WebMinotaur.Repositories
 
         public DeviceToken Get(string id)
         {
-            throw new NotImplementedException();
+            return db.DeviceTokens.Find(id);
         }
-
-        public List<DeviceToken> GetAll()
+        public async Task<DeviceToken> GetAsync(string id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<DeviceToken>> GetAllAsync()
-        {
-            throw new NotImplementedException();
+            return await db.DeviceTokens.FindAsync(id);
         }
 
         public List<DeviceToken> GetAllByUserId(string userId)
@@ -61,14 +55,19 @@ namespace WebMinotaur.Repositories
 
         public async Task<List<DeviceToken>> GetAllByUserIdAsync(string userId)
         {
-            //var device =  await db.Devices.Where(u => u.AppUserId == userId).Include(t => t.TokenDevices).ToListAsync()
-            throw new NotImplementedException();
+            var devices = await db.Devices.Where(u => u.AppUserId == userId).Include(t => t.TokenDevices).ToListAsync();
+            List<DeviceToken> tkds = new List<DeviceToken>();
+            foreach (var d in devices)
+            {
+                foreach (var tk in d.TokenDevices)
+                {
+                    tkds.Add(tk);
+                }
+            }
+            return tkds;
         }
 
-        public Task<DeviceToken> GetAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public List<DeviceToken> GetValidsToken(string deviceid)
         {
