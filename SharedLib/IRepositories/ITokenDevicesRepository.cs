@@ -19,10 +19,6 @@ namespace SharedLib.IRepositories
         //Delete
         void Remove(string id);
         Task RemoveAsync(string id);
-        //GetAll
-        List<DeviceToken> GetAll();
-        Task<List<DeviceToken>> GetAllAsync();
-
         List<DeviceToken> GetAllByUserId(string userId);
         Task<List<DeviceToken>> GetAllByUserIdAsync(string userId);
         //Revoke
