@@ -1,5 +1,5 @@
 <hr />
-<h4>Device Editor</h4>
+<h4>Device Editor - Mode @mode</h4>
 
 <MatCard>
     <div class="form-group">
@@ -20,5 +20,8 @@
 
     [Parameter]
     EventCallback<UIMouseEventArgs> OnValidate { get; set; }
+
+    [Parameter]
+    FormMode mode { get; set; }
 
 }
