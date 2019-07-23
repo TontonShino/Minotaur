@@ -2,16 +2,24 @@
 <br />
 <hr />
 <h3>Device details</h3>
-@if (device != null)
-{
-    <p>@device?.Name</p>
-    <p>@device?.CreationDate</p>
-    <p>Number of tokens : @device.TokenDevices?.Count</p>
-}
-@if(device == null)
-{
-    <p>Select a device</p>
-}
+<MatCard>
+    @if (device != null)
+    {
+
+    <MatList>
+        <p>Device Id: @device.Id</p>
+        <p>Device Name: @device?.Name</p>
+        <p>Device Creation Date: @device?.CreationDate</p>
+        <p>Number of tokens : @device.TokenDevices?.Count</p>
+        <p>Last update: @device.LastUpdateDate</p>
+        <p>Description: @device.Description</p>
+    </MatList>
+    }
+    @if (device == null)
+    {
+        <p>Select a device</p>
+    }
+</MatCard>
 <br />
 <hr />
 @code {
