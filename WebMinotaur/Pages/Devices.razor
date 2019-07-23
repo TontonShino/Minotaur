@@ -32,7 +32,7 @@
                     <td>@context.Id</td>
                     <td>@context.Name</td>
                     <td>
-                        <MatButton Outlined="true">Edit</MatButton>
+                        <MatButton Outlined="true" @onclick="@(() => EditDevice(context) )">Edit</MatButton>
                         <MatButton Outlined="true">Tokens</MatButton>
                         <MatButton Outlined="true" @onclick="@(() => DeviceDetails(context))">Details</MatButton>
                         <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(@context.Id))">Delete</MatButton>
@@ -49,7 +49,12 @@
 <br />
 
 
-<devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" />
+
+    <devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" mode="@mode" />
+
+
+
+
 
 
 @code
@@ -67,7 +72,6 @@
 
     protected override async Task OnInitAsync()
     {
-
         await setUserId();
         await refreshDevices();
     }
@@ -124,7 +128,22 @@
     }
     async Task ValidateDevice()
     {
-        await addDevice();
+        //From mode selected we do action
 
+        //If mode create 
+        //Add device
+
+        //If mode edit
+        //update to db
+        await addDevice();
+    }
+    async Task updateDevice()
+    {
+
+    }
+    void EditDevice(Device device)
+    {
+        mode = FormMode.Edit;
+        deviceEdit = device;
     }
 }
