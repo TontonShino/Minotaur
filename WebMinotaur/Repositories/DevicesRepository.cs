@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedLib;
 using SharedLib.IRepositories;
+using SharedLib.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,17 +19,11 @@ namespace WebMinotaur.Repositories
         }
         public Device AddDevice(Device device)
         {
-            var d = new Device
-            {
-                AppUserId = device.AppUserId,
-                Name = device.Name,
-                Description = device.Description,
-                CreationDate = DateTime.UtcNow,
-                LastUpdateDate = DateTime.UtcNow
-            };
-            db.Devices.Add(d);
+            device.CreationDate = DateTime.UtcNow;
+            device.LastUpdateDate = DateTime.UtcNow;
+            db.Devices.Add(device);
             db.SaveChanges();
-            return d;
+            return device;
         }
 
         public async Task<Device> AddDeviceAsync(Device device)
@@ -44,7 +39,7 @@ namespace WebMinotaur.Repositories
         {
             var device = db.Devices.Find(id);
 
-            if(device != null)
+            if (device != null)
             {
                 db.Devices.Remove(device);
                 db.SaveChanges();
@@ -87,7 +82,7 @@ namespace WebMinotaur.Repositories
         {
             //return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.TokenDevices).ToListAsync();
             return await db.Devices.Where(u => u.AppUserId == userid).ToListAsync();
-            
+
         }
 
         public Device UpdateDevice(Device device)
@@ -101,7 +96,7 @@ namespace WebMinotaur.Repositories
             {
                 if (!DeviceExists(device.Id))
                 {
-                 //Todo    
+                    //Todo    
                 }
                 else
                 {
