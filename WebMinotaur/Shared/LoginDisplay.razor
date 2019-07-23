@@ -1,10 +1,31 @@
+@inject IUriHelper uriHelper
 <AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
         <a href="Identity/Account/LogOut">Log out</a>
+        <MatButton OnClick="Logout">Logout</MatButton>
     </Authorized>
     <NotAuthorized>
         <a href="Identity/Account/Register">Register</a>
         <a href="Identity/Account/Login">Log in</a>
+        <MatButton OnClick="Login">Login</MatButton>
     </NotAuthorized>
 </AuthorizeView>
+
+@code
+{
+    string baseUri;
+    protected void OnInit()
+    {
+        baseUri = uriHelper.GetAbsoluteUri();
+    }
+    void Logout()
+    {
+        uriHelper.NavigateTo(baseUri+"/Identity/Account/LogOut");
+
+    }
+    void Login()
+    {
+        uriHelper.NavigateTo(baseUri+"/Identity/Account/Login");
+    }
+}
