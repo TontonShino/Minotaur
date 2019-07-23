@@ -10,6 +10,7 @@
     </div>
     <div class="form-group">
         <MatButton Outlined="true" @onclick="@OnValidate">Validate</MatButton>
+        <MatButton Outlined="true" @onclick="@OnCancel">Cancel</MatButton>
     </div>
 </MatCard>
 <hr />
@@ -20,6 +21,9 @@
 
     [Parameter]
     EventCallback<UIMouseEventArgs> OnValidate { get; set; }
+
+    [Parameter]
+    EventCallback<UIMouseEventArgs> OnCancel { get; set; }
 
     [Parameter]
     FormMode mode { get; set; }
