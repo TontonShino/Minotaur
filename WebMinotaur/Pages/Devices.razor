@@ -9,6 +9,7 @@
 @inject IDeviceTokensRepository deviceTokensRepository
 
 <h3>Devices</h3>
+
 <hr />
 <div>
     <h4>Registered devices</h4>
@@ -50,7 +51,7 @@
 
 
 
-    <devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" mode="@mode" />
+<devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" mode="@mode" OnCancel="@CancelEdit"/>
 
 
 
@@ -63,8 +64,7 @@
 
     [CascadingParameter]
     Task<AuthenticationState> authenticationStateTask { get; set; }
-    string username { get; set; }
-    string userId { get; set; }
+    UserInfo userInfo { get; set; } = new UserInfo();
     Device deviceEdit = new Device();
     Device deviceDetails { get; set; }
     List<Device> devices { get; set; }
@@ -72,6 +72,7 @@
 
     protected override async Task OnInitAsync()
     {
+        await setUsername();
         await setUserId();
         await refreshDevices();
     }
@@ -80,9 +81,14 @@
     {
         await deviceRepo.AddDeviceAsync(deviceEdit);
 
-        //Generate tokens
-        var token = tokenService.GenerateTokenDevice(username);
-        //Register tokens (db)
+        var deviceToken = prepareToken();
+
+        await deviceTokensRepository.CreateAsync(deviceToken);
+
+    }
+    DeviceToken prepareToken()
+    {
+        var token = tokenService.GenerateTokenDevice(userInfo.Username);
         var deviceToken = new DeviceToken
         {
             Id = tokenService.IntoString(token),
@@ -91,22 +97,24 @@
             CreationDate = DateTime.UtcNow,
             ExpirationDate = token.ValidTo
         };
+        return deviceToken;
 
-        await deviceTokensRepository.CreateAsync(deviceToken);
-        await refreshDevices();
-        deviceEdit = new Device { AppUserId = userId };
     }
     async Task refreshDevices()
     {
-        devices = await deviceRepo.GetDevicesAsyncByUserId(userId) ?? null;
+        devices = await deviceRepo.GetDevicesAsyncByUserId(userInfo.UserId) ?? null;
+    }
+    async Task setUsername()
+    {
+        var authState = await authenticationStateTask;
+        userInfo.Username = authState.User.Identity.Name;
     }
     async Task setUserId()
     {
         var authState = await authenticationStateTask;
-        username = authState.User.Identity.Name;
         var user = authState.User;
-        userId = userAuthService.GetUserId(user);
-        deviceEdit.AppUserId = userId;
+        userInfo.UserId = userAuthService.GetUserId(user);
+        deviceEdit.AppUserId = userInfo.UserId;
     }
     async Task RemoveDeviceAsync(string id)
     {
@@ -118,32 +126,37 @@
     {
         deviceDetails = device;
     }
-    async Task createTokenDeviceAsync()
+    void resetDeviceEdit()
     {
-
-    }
-    async Task ChildValidatedDevice()
-    {
-
+        deviceEdit = new Device { AppUserId = userInfo.UserId };
     }
     async Task ValidateDevice()
     {
-        //From mode selected we do action
+        if (mode == FormMode.Create)
+        {
+            await addDevice();
+        }
+        else if (mode == FormMode.Edit)
+        {
+            await updateDevice();
+        }
+        resetDeviceEdit();
+        await refreshDevices();
 
-        //If mode create 
-        //Add device
 
-        //If mode edit
-        //update to db
-        await addDevice();
     }
     async Task updateDevice()
     {
-
+        await deviceRepo.UpdateDeviceAsync(deviceEdit);
     }
     void EditDevice(Device device)
     {
         mode = FormMode.Edit;
         deviceEdit = device;
+    }
+    void CancelEdit()
+    {
+        mode = FormMode.Create;
+        resetDeviceEdit();
     }
 }
