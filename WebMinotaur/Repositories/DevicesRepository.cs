@@ -87,9 +87,11 @@ namespace WebMinotaur.Repositories
 
         public Device UpdateDevice(Device device)
         {
+            
             db.Entry(device).State = EntityState.Modified;
             try
             {
+                device.LastUpdateDate = DateTime.UtcNow;
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
@@ -108,6 +110,7 @@ namespace WebMinotaur.Repositories
 
         public async Task<Device> UpdateDeviceAsync(Device device)
         {
+            device.LastUpdateDate = DateTime.UtcNow;
             db.Devices.Update(device);
             await db.SaveChangesAsync();
             return device;
