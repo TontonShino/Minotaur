@@ -1,10 +1,11 @@
 @page "/devicestk"
 
-
 @attribute [Authorize]
 
 @inject IUserAuthService userAuthService
 @inject IDeviceTokensRepository deviceTokensRepository
+@inject IDevicesRepository deviceRepository
+@inject ITokenService tokenService
 
 <h3>Tokens</h3>
 
@@ -25,17 +26,20 @@
                     <MatButton Outlined="true" @onclick="@(() => setTokenToShow(@context.Id) )">Show</MatButton>
                     @if (context.Enabled == true)
                     {
-                        <MatButton Outlined="true">Disable</MatButton>
+                        <MatButton Outlined="true" @onclick="@(async ()=> await DisableToken(@context.Id))">Disable</MatButton>
                     }
                     else if (context.Enabled == false)
                     {
-                        <MatButton Outlined="true">Enable</MatButton>
+                        <MatButton Outlined="true" @onclick="@(async ()=> await EnableToken(@context.Id))">Enable</MatButton>
                     }
-                    <MatButton Outlined="true">Remove</MatButton>
+                    <MatButton Outlined="true" @onclick="@(async () => await RemoveToken(@context.Id))">Remove</MatButton>
 
                 </td>
             </MatTableRow>
         </MatTable>
+    </div>
+    <div>
+        <MatButton Raised="true" Outlined="true" @onclick="@(async () => await showGenerateTokenDialog() )">Generate New Token</MatButton>
     </div>
     <MatDialog @bind-IsOpen="@showTokenDialog">
         <MatDialogContent>
@@ -49,18 +53,37 @@
             <MatButton @onclick="@closeTokenDialog">Close</MatButton>
         </MatDialogActions>
     </MatDialog>
+
+    <MatDialog @bind-IsOpen="@showNewTokenDialog">
+        <MatDialogTitle>Generate token for device</MatDialogTitle>
+        <MatDialogContent>
+            <MatSelect @bind-Value="@deviceSelectedId" Label="Select the concerned device">
+                @foreach (var d in devices)
+                {
+                    <MatOption Value="@d.Id">@d.Name</MatOption>
+                }
+            </MatSelect>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Raised="true" @onclick="@GenerateToken">Generate</MatButton>
+            <MatButton Outlined="true" @onclick="@( async () => hideGenerateTokenDialog())">Cancel</MatButton>
+        </MatDialogActions>
+    </MatDialog>
 </div>
 @code {
     [CascadingParameter]
     Task<AuthenticationState> authState { get; set; }
 
     bool showTokenDialog { get; set; } = false;
+    bool showNewTokenDialog { get; set; } = false;
     string tokenValue { get; set; }
 
 
     string userId { get; set; }
     string username { get; set; }
     List<DeviceToken> deviceTokens { get; set; } = new List<DeviceToken>();
+    List<Device> devices { get; set; } = new List<Device>();
+    string deviceSelectedId { get; set; }
 
     protected override async Task OnInitAsync()
     {
@@ -90,5 +113,43 @@
     void closeTokenDialog()
     {
         showTokenDialog = false;
+    }
+    async Task EnableToken(string id)
+    {
+        await deviceTokensRepository.EnableAsync(id);
+        refreshDeviceTokenList();
+    }
+    async Task DisableToken(string id)
+    {
+        await deviceTokensRepository.DisableAsync(id);
+        refreshDeviceTokenList();
+    }
+    async Task RemoveToken(string id)
+    {
+        await deviceTokensRepository.RemoveAsync(id);
+
+    }
+    async Task showGenerateTokenDialog()
+    {
+        devices = await deviceRepository.GetDevicesAsyncByUserId(userId);
+        showNewTokenDialog = true;
+    }
+    void hideGenerateTokenDialog()
+    {
+        showNewTokenDialog = false;
+    }
+    async Task GenerateToken()
+    {
+        var token = tokenService.GenerateTokenDevice(username);
+        var deviceToken = new DeviceToken
+        {
+            Id = tokenService.IntoString(token),
+            DeviceId = deviceSelectedId,
+            Enabled = true,
+            CreationDate = DateTime.UtcNow,
+            ExpirationDate = token.ValidTo
+        };
+        await deviceTokensRepository.CreateAsync(deviceToken);
+        hideGenerateTokenDialog();
     }
 }
