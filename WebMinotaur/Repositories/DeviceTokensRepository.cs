@@ -69,44 +69,69 @@ namespace WebMinotaur.Repositories
 
 
 
-        public List<DeviceToken> GetValidsToken(string deviceid)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool IsEnabled(string token)
         {
-            throw new NotImplementedException();
+            var tkd = db.DeviceTokens.Find(token);
+
+            return tkd != null ? tkd.Enabled : false;
         }
 
         public void Remove(string id)
         {
-            throw new NotImplementedException();
+            var deviceToken = db.DeviceTokens.Find(id);
+            db.DeviceTokens.Remove(deviceToken);
+            db.SaveChanges();
+
         }
 
-        public Task RemoveAsync(string id)
+        public async Task RemoveAsync(string id)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Revoke(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RevokeAsync(string id)
-        {
-            throw new NotImplementedException();
+            var deviceToken = db.DeviceTokens.Find(id);
+            db.DeviceTokens.Remove(deviceToken);
+            await db.SaveChangesAsync();
         }
 
         public DeviceToken Update(DeviceToken tokendevice)
         {
-            throw new NotImplementedException();
+            db.DeviceTokens.Update(tokendevice);
+            db.SaveChanges();
+            return tokendevice;
         }
 
-        public Task<DeviceToken> UpdateAsync(DeviceToken tokendevice)
+        public async Task<DeviceToken> UpdateAsync(DeviceToken tokendevice)
         {
-            throw new NotImplementedException();
+            db.DeviceTokens.Update(tokendevice);
+            await db.SaveChangesAsync();
+            return tokendevice;
+        }
+
+        public void Disable(string id)
+        {
+            var deviceToken = db.DeviceTokens.Find(id);
+            deviceToken.Enabled = false;
+            db.SaveChanges();
+        }
+
+        public async Task DisableAsync(string id)
+        {
+            var deviceToken = await db.DeviceTokens.FindAsync(id);
+            deviceToken.Enabled = false;
+            await db.SaveChangesAsync();
+        }
+
+        public void Enable(string id)
+        {
+            var deviceToken = db.DeviceTokens.Find(id);
+            deviceToken.Enabled = true;
+            db.SaveChanges();
+        }
+
+        public async Task EnableAsync(string id)
+        {
+            var deviceToken = await db.DeviceTokens.FindAsync(id);
+            deviceToken.Enabled = true;
+            await db.SaveChangesAsync();
         }
     }
 }

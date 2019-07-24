@@ -21,12 +21,10 @@ namespace SharedLib.IRepositories
         Task RemoveAsync(string id);
         List<DeviceToken> GetAllByUserId(string userId);
         Task<List<DeviceToken>> GetAllByUserIdAsync(string userId);
-        //Revoke
-        void Revoke(string id);
-        void RevokeAsync(string id);
-        //GetValidsTokens
-        List<DeviceToken> GetValidsToken(string deviceid);
-        //IsEnabled
+        void Disable(string id);
+        Task DisableAsync(string id);
+        void Enable(string id);
+        Task EnableAsync(string id);
         bool IsEnabled(string token);
     }
 }
