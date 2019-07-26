@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedLib;
 using SharedLib.IServices;
+using WebMinotaur.Data;
 
 namespace WebMinotaur.Controllers
 {
@@ -13,9 +15,11 @@ namespace WebMinotaur.Controllers
     public class TestsController : ControllerBase
     {
         private readonly ITokenService tokenService;
-        public TestsController(ITokenService tokenService)
+        private readonly ApplicationDbContext db;
+        public TestsController(ITokenService tokenService, ApplicationDbContext db)
         {
             this.tokenService = tokenService;
+            this.db = db;
         }
 
         [HttpGet]
@@ -30,6 +34,20 @@ namespace WebMinotaur.Controllers
         public string DecodeToken([FromBody]TokenModel model)
         {
             return tokenService.DecodeToken(model.token).ToString();
+        }
+
+        [HttpPost]
+        [Route("addInfoIP/")]
+        public InfoIP addInfoIp([FromBody]InfoIP infoIp)
+        {
+            var toInsertInfo = new InfoIP {
+                Ip = infoIp.Ip,
+                Record = DateTime.UtcNow,
+                DeviceId = infoIp.DeviceId
+            };
+            db.InfoIP.Add(toInsertInfo);
+            db.SaveChanges();
+            return toInsertInfo;
         }
         
     }
