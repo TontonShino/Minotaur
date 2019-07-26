@@ -1,11 +1,71 @@
 ﻿@page "/"
+@attribute [Authorize]
+@inject IUserAuthService userAuthService
+@inject IDevicesRepository devicesRepository
 
-<h1>Welcome to Minotaur</h1>
-<AuthorizeView>
-    <Authorized>
-        Your are logged as @context.User.Identity.Name
-    </Authorized>
-    <NotAuthorized>
-        You need to be logged on to acces to the monitoring
-    </NotAuthorized>
-</AuthorizeView>
+@if (devices.Count < 1)
+{
+    <p>No Device Yet</p>
+}
+else
+{
+    <MatTable Items="devices">
+        <MatTableHeader>
+            <th>Name</th>
+            <th>Last IP</th>
+            <th>Actions</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Name</td>
+            @if (context.InfoIP == null)
+                {
+
+                <td>No record registered yet</td>
+
+                }
+                else
+                {
+
+                    <td>@context.InfoIP?.FirstOrDefault().Ip</td>
+                    
+
+
+                }
+
+
+
+            <td>BTN</td>
+        </MatTableRow>
+
+    </MatTable>
+}
+
+@code
+{
+    [CascadingParameter]
+    Task<AuthenticationState> authStateTask { get; set; }
+    List<Device> devices { get; set; } = new List<Device>();
+    UserInfo userInfo { get; set; } = new UserInfo();
+
+    protected override async Task OnInitAsync()
+    {
+        await setUserId();
+        await setUsername();
+        await refreshDevices();
+    }
+    async Task setUserId()
+    {
+        var authstate = await authStateTask;
+        userInfo.UserId = userAuthService.GetUserId(authstate.User);
+
+    }
+    async Task setUsername()
+    {
+        var authstate = await authStateTask;
+        userInfo.Username = authstate.User.Identity.Name;
+    }
+    async Task refreshDevices()
+    {
+        devices = await devicesRepository.GetDevicesLastIpAsync(userInfo.UserId);
+    }
+}
