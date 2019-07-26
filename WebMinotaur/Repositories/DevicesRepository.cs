@@ -81,13 +81,13 @@ namespace WebMinotaur.Repositories
         public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
         {
             //return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.TokenDevices).ToListAsync();
-            return await db.Devices.Where(u => u.AppUserId == userid).ToListAsync();
+            return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP).ToListAsync();
 
         }
 
         public Device UpdateDevice(Device device)
         {
-            
+
             db.Entry(device).State = EntityState.Modified;
             try
             {
@@ -119,6 +119,33 @@ namespace WebMinotaur.Repositories
         public bool DeviceExists(string id)
         {
             return db.Devices.Any(e => e.Id == id);
+        }
+
+        public async Task<List<Device>> GetDevicesLastIpAsync(string userid)
+        {
+            var devices = await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP).AsNoTracking().ToListAsync();
+
+            var filteredDevices = from d in devices
+                                  select new Device
+                                  {
+                                      Id = d.Id,
+                                      Name = d.Name,
+                                      Description = d.Description,
+                                      AppUserId = d.AppUserId,
+                                      InfoIP = (d.InfoIP.Count>0) ? new List<InfoIP>
+                                      {
+                                         d.InfoIP.OrderByDescending(w => w.Record).FirstOrDefault()
+                                      } : null
+
+
+                                  };
+            return filteredDevices.ToList();
+
+        }
+
+        public List<Device> GetDevicesLastIp(string userid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace SharedLib.IRepositories
     {
         Task<List<Device>> GetDevicesAsyncByUserId(string userid);
         List<Device> GetDevicesByUserId(string userid);
+        Task<List<Device>> GetDevicesLastIpAsync(string userid);
+        List<Device> GetDevicesLastIp(string userid);
         Task<Device> GetDeviceAsync(string id);
         Device GetDevice(string id);
         Task<Device> AddDeviceAsync(Device device);
