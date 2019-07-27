@@ -11,6 +11,8 @@ namespace SharedLib.IRepositories
         List<Device> GetDevicesByUserId(string userid);
         Task<List<Device>> GetDevicesLastIpAsync(string userid);
         List<Device> GetDevicesLastIp(string userid);
+        Task<List<InfoIP>> GetDeviceHistoryAsync(string deviceId);
+        List<InfoIP> GetDeviceHistory(string deviceId);
         Task<Device> GetDeviceAsync(string id);
         Device GetDevice(string id);
         Task<Device> AddDeviceAsync(Device device);

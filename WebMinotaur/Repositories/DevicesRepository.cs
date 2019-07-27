@@ -81,7 +81,7 @@ namespace WebMinotaur.Repositories
         public async Task<List<Device>> GetDevicesAsyncByUserId(string userid)
         {
             //return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.TokenDevices).ToListAsync();
-            return await db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP).ToListAsync();
+            return await db.Devices.Where(u => u.AppUserId == userid).ToListAsync();
 
         }
 
@@ -145,7 +145,33 @@ namespace WebMinotaur.Repositories
 
         public List<Device> GetDevicesLastIp(string userid)
         {
-            throw new NotImplementedException();
+            var devices =  db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP).AsNoTracking();
+
+            var filteredDevices = from d in devices
+                                  select new Device
+                                  {
+                                      Id = d.Id,
+                                      Name = d.Name,
+                                      Description = d.Description,
+                                      AppUserId = d.AppUserId,
+                                      InfoIP = (d.InfoIP.Count > 0) ? new List<InfoIP>
+                                      {
+                                         d.InfoIP.OrderByDescending(w => w.Record).FirstOrDefault()
+                                      } : null
+
+
+                                  };
+            return filteredDevices.ToList();
+        }
+
+        public async Task<List<InfoIP>> GetDeviceHistoryAsync(string deviceId)
+        {
+            return await db.InfoIP.Where(d => d.DeviceId == deviceId).Include(d => d.Device).AsNoTracking().ToListAsync();
+        }
+
+        public List<InfoIP> GetDeviceHistory(string deviceId)
+        {
+            return db.InfoIP.Where(d => d.DeviceId == deviceId).Include(d => d.Device).AsNoTracking().ToList();
         }
     }
 }
