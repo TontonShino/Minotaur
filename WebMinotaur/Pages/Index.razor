@@ -25,19 +25,42 @@ else
                 }
                 else
                 {
-
-                    <td>@context.InfoIP?.FirstOrDefault().Ip</td>
-                    
-
+                
+                <td>@context.InfoIP.FirstOrDefault().Ip  (@context.InfoIP.FirstOrDefault().Record.ToLocalTime())</td>
 
                 }
-
-
-
-            <td>BTN</td>
+            
+            <td>
+                <MatButton OnClick="@( async () => await showHistoryClick(context.Id))">Show history</MatButton>
+            </td>
         </MatTableRow>
-
     </MatTable>
+
+    <MatDialog IsOpen="showHistoryDeviceDialog">
+        <MatDialogTitle>
+            Device history
+        </MatDialogTitle>
+        <MatDialogContent>
+            <MatTable Items="selectedInfoIPs">
+                <MatTableHeader>
+                    <th>Name</th>
+                    <th>IP</th>
+                    <th>Time</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Device.Name</td>
+                    <td>@context.Ip</td>
+                    <td>@context.Record.ToLocalTime()</td>
+                    <td></td>
+                </MatTableRow>
+            </MatTable>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="closeDeviceHistoryDialog">Close</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+
 }
 
 @code
@@ -46,6 +69,8 @@ else
     Task<AuthenticationState> authStateTask { get; set; }
     List<Device> devices { get; set; } = new List<Device>();
     UserInfo userInfo { get; set; } = new UserInfo();
+    bool showHistoryDeviceDialog { get; set; } = false;
+    List<InfoIP> selectedInfoIPs { get; set; } = new List<InfoIP>();
 
     protected override async Task OnInitAsync()
     {
@@ -67,5 +92,15 @@ else
     async Task refreshDevices()
     {
         devices = await devicesRepository.GetDevicesLastIpAsync(userInfo.UserId);
+    }
+
+    async Task showHistoryClick(string deviceId)
+    {
+        selectedInfoIPs = await devicesRepository.GetDeviceHistoryAsync(deviceId);
+        showHistoryDeviceDialog = true;
+    }
+    void closeDeviceHistoryDialog()
+    {
+        showHistoryDeviceDialog = false;
     }
 }
