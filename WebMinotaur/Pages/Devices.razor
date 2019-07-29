@@ -25,16 +25,13 @@
         <div>
             <MatTable Items="@devices" Striped="true">
                 <MatTableHeader>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Actions</th>
                 </MatTableHeader>
                 <MatTableRow>
-                    <td>@context.Id</td>
                     <td>@context.Name</td>
                     <td>
                         <MatButton Outlined="true" @onclick="@(() => EditDevice(context) )">Edit</MatButton>
-                        <MatButton Outlined="true">Tokens</MatButton>
                         <MatButton Outlined="true" @onclick="@(() => DeviceDetails(context))">Details</MatButton>
                         <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(@context.Id))">Delete</MatButton>
                     </td>
@@ -49,13 +46,7 @@
 
 <br />
 
-
-
 <devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" mode="@mode" OnCancel="@CancelEdit"/>
-
-
-
-
 
 
 @code
@@ -88,7 +79,7 @@
     }
     DeviceToken prepareToken()
     {
-        var token = tokenService.GenerateTokenDevice(userInfo.Username);
+        var token = tokenService.GenerateToken(userInfo.Username);
         var deviceToken = new DeviceToken
         {
             Id = tokenService.IntoString(token),
