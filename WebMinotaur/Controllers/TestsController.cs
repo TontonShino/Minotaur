@@ -26,7 +26,7 @@ namespace WebMinotaur.Controllers
         [Route("generate/{id}")]
         public string GenerateToken(string id)
         {
-            return tokenService.GenerateTokenDevice(id).ToString();
+            return tokenService.GenerateToken(id).ToString();
         }
 
         [HttpPost]
