@@ -18,7 +18,7 @@ namespace WebMinotaur.Services
         {
             this.configService = configService;
         }
-        public JwtSecurityToken GenerateTokenDevice(string username)
+        public JwtSecurityToken GenerateToken(string username)
         {
             var authClaims = new[]
                 {

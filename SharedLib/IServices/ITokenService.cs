@@ -7,7 +7,7 @@ namespace SharedLib.IServices
 {
     public interface ITokenService
     {
-        JwtSecurityToken GenerateTokenDevice(string username);
+        JwtSecurityToken GenerateToken(string username);
         JwtSecurityToken DecodeToken(string tokenString);
         bool IsValid(string tokenString);
         string IntoString(JwtSecurityToken token);
