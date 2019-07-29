@@ -13,13 +13,13 @@
     <div class="table-responsive">
         <MatTable Items="@deviceTokens">
             <MatTableHeader>
-                <th>Device ID</th>
+                <th>Device Name</th>
                 <th>Enabled</th>
                 <th>Expiration</th>
                 <th>Actions</th>
             </MatTableHeader>
             <MatTableRow>
-                <td>@context.DeviceId</td>
+                <td>@context.Device.Name</td>
                 <td>@context.Enabled</td>
                 <td>@context.ExpirationDate</td>
                 <td>
@@ -44,10 +44,11 @@
     <MatDialog @bind-IsOpen="@showTokenDialog">
         <MatDialogContent>
             <p>This is your JWT Token</p>
-            <MatCard>
-                <p>@tokenValue</p>
-            </MatCard>
-            <MatTextField @bind-Value="@tokenValue" Disabled="true"/>
+                <div class="card">
+                    <div class="card-body">
+                        @tokenValue
+                    </div>
+                </div>
         </MatDialogContent>
         <MatDialogActions>
             <MatButton @onclick="@closeTokenDialog">Close</MatButton>
@@ -140,7 +141,7 @@
     }
     async Task GenerateToken()
     {
-        var token = tokenService.GenerateTokenDevice(username);
+        var token = tokenService.GenerateToken(username);
         var deviceToken = new DeviceToken
         {
             Id = tokenService.IntoString(token),
