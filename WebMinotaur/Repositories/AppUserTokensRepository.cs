@@ -27,9 +27,14 @@ namespace WebMinotaur.Repositories
             throw new NotImplementedException();
         }
 
+        public bool Exists(string id)
+        {
+            return db.AppUserTokens.Any(t => t.Id == id);
+        }
+
         public AppUserToken Get(string id)
         {
-            throw new NotImplementedException();
+            return db.AppUserTokens.Find(id);
         }
 
         public AppUserToken Update(AppUserToken appUserToken)
