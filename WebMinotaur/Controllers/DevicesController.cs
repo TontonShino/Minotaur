@@ -13,6 +13,10 @@ using WebMinotaur.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using SharedLib.Models;
+using Microsoft.Extensions.Primitives;
+using SharedLib.IServices;
+using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WebMinotaur.Controllers
 {
@@ -22,14 +26,30 @@ namespace WebMinotaur.Controllers
     [ApiController]
     public class DevicesController : ControllerBase
     {
+        private readonly UserManager<AppUser> userManager;
         private readonly ApplicationDbContext _context;
-        private readonly IDevicesRepository _dr;
+        private readonly IDeviceTokensRepository deviceTokensRepository;
+        private readonly IDevicesRepository devicesRepository;
         private readonly IAppUserTokensRepository appUserTokensRepository;
-        public DevicesController(ApplicationDbContext context, IDevicesRepository dr, IAppUserTokensRepository appUserTokensRepository)
+        private readonly ITokenService tokenService;
+        private readonly IAppUserRepository appUserRepository;
+        public DevicesController
+            (
+                ApplicationDbContext context, 
+                IDevicesRepository dr, 
+                IAppUserTokensRepository appUserTokensRepository,
+                ITokenService tokenService,
+                IAppUserRepository appUserRepository,
+                IDeviceTokensRepository deviceTokensRepository
+            )
         {
             _context = context;
-            _dr = dr;
+            devicesRepository = dr;
             this.appUserTokensRepository = appUserTokensRepository;
+            this.tokenService = tokenService;
+            this.appUserRepository = appUserRepository;
+            this.deviceTokensRepository = deviceTokensRepository;
+            
            
         }
         #region Old code
@@ -125,15 +145,54 @@ namespace WebMinotaur.Controllers
         //    return _context.Devices.Any(e => e.Id == id);
         //}
         #endregion oldCode
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        [Route("NewDevice")]
-        public Device NewDevice([FromBody]DeviceModel deviceModel)
+        public IActionResult PostDevice([FromBody]DeviceModel deviceModel)
         {
             //get Token
-            var accessToken = Request.Headers["Authorization"];
-            Console.WriteLine(accessToken);
-            return new Device();
+            var accessToken = Request.Headers["Authorization"].ToString().Split(' ')[1];
+
+            if(appUserTokensRepository.Exists(accessToken))
+            {
+                //Todo: enabled
+                var userTk = appUserTokensRepository.Get(accessToken);
+                var user = appUserRepository.Get(userTk.AppUserId);
+                var dtk = tokenService.GenerateToken(user.UserName);
+
+
+                var device = new Device
+                {
+                    AppUserId = userTk.AppUserId,
+                    Name = deviceModel.Name,
+                    Description = deviceModel?.Description,
+                    CreationDate = DateTime.UtcNow,
+                    LastUpdateDate = DateTime.UtcNow
+                };
+
+                devicesRepository.AddDevice(device);
+
+                var deviceToken = new DeviceToken
+                {
+                    Id = new JwtSecurityTokenHandler().WriteToken(dtk),
+                    DeviceId = device.Id,
+                    CreationDate = DateTime.UtcNow,
+                    Enabled = true,
+                    ExpirationDate = dtk.ValidTo
+
+                };
+
+                deviceTokensRepository.Create(deviceToken);
+
+
+                return Ok(new
+                {
+                    deviceToken = deviceToken.Id,
+                    deviceId = device.Id
+
+                });
+            }
+            return NotFound();
         }
     }
 }
