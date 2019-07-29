@@ -25,81 +25,54 @@ namespace WebMinotaur.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenService tokenService;
-        private readonly IDeviceTokensRepository deviceTokensRepository;
+        private readonly IAppUserTokensRepository appUserTokensRepository;
+
 
         public AuthenticateController
             (
                 UserManager<AppUser> userManager,
                 ITokenService tokenService,
-                IDeviceTokensRepository deviceTokensRepository
+                IAppUserTokensRepository appUserTokensRepository
             )
         {
             this.userManager = userManager;
             this.tokenService = tokenService;
-            this.deviceTokensRepository = deviceTokensRepository;
+            this.appUserTokensRepository = appUserTokensRepository;
 
         }
 
         [HttpPost]
-        [Route("login")]
+        [Route("login/")]
         public async Task<IActionResult> Login([FromBody] LoginModel login)
         {
             var user = await userManager.FindByNameAsync(login.Username);
 
             if (user != null && await userManager.CheckPasswordAsync(user, login.Password))
             {
-                var authClaims = new[]
+                var token = tokenService.GenerateToken(user.UserName);
+                var appUserToken = new AppUserToken
                 {
-                    new Claim (JwtRegisteredClaimNames.Sub, user.UserName),
-                    new Claim (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    Id = new JwtSecurityTokenHandler().WriteToken(token),
+                    ExpirationDate = token.ValidTo,
+                    CreationDate = DateTime.UtcNow,
+                    Enabled = true,
+                    AppUserId = user.Id
                 };
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("OhalalaMonCoeurDanseLaMacarena"));
+                appUserTokensRepository.Create(appUserToken);
 
-                var token = new JwtSecurityToken(
-                    issuer: "http://minotaur.fr",
-                    audience: "http://minotaur.fr",
-                    expires: DateTime.Now.AddMonths(3),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
 
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo
                 });
-            }
-            return Unauthorized();
-        }
 
-        [HttpPost]
-        [Route("login2")]
-        public async Task<IActionResult> Login2([FromBody] LoginModel login)
-        {
-            var user = await userManager.FindByNameAsync(login.Username);
 
-            if (user != null && await userManager.CheckPasswordAsync(user, login.Password))
-            {
-                var token = tokenService.GenerateTokenDevice(user.UserName);
-
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
             }
             return Unauthorized();
         }
 
 
-
-
-        //[HttpPost]
-        //[Route("logout")]
-        //public async Task<IActionResult> Logout()
-        //{
-        //    Authentication.SignOut(CookieAuthenticationDefaults.Authentication);
-        //}
     }
 }
