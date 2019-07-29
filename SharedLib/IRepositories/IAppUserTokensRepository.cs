@@ -10,6 +10,7 @@ namespace SharedLib.IRepositories
         AppUserToken Get(string id);
         AppUserToken Update(AppUserToken appUserToken);
         void Delete(string id);
+        bool Exists(string id);
 
     }
 }
