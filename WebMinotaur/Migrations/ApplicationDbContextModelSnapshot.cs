@@ -191,7 +191,7 @@ namespace WebMinotaur.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("AppUserToken");
+                    b.ToTable("AppUserTokens");
                 });
 
             modelBuilder.Entity("SharedLib.Device", b =>

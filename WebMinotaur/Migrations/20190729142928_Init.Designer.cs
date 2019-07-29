@@ -9,7 +9,7 @@ using WebMinotaur.Data;
 namespace WebMinotaur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190721083229_Init")]
+    [Migration("20190729142928_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -193,7 +193,7 @@ namespace WebMinotaur.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("AppUserToken");
+                    b.ToTable("AppUserTokens");
                 });
 
             modelBuilder.Entity("SharedLib.Device", b =>

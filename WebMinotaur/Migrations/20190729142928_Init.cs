@@ -68,7 +68,7 @@ namespace WebMinotaur.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppUserToken",
+                name: "AppUserTokens",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
@@ -79,9 +79,9 @@ namespace WebMinotaur.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppUserToken", x => x.Id);
+                    table.PrimaryKey("PK_AppUserTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AppUserToken_AspNetUsers_AppUserId",
+                        name: "FK_AppUserTokens_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -238,8 +238,8 @@ namespace WebMinotaur.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppUserToken_AppUserId",
-                table: "AppUserToken",
+                name: "IX_AppUserTokens_AppUserId",
+                table: "AppUserTokens",
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
@@ -298,7 +298,7 @@ namespace WebMinotaur.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AppUserToken");
+                name: "AppUserTokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
