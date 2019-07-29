@@ -58,6 +58,7 @@ namespace WebMinotaur
             services.AddTransient<IDevicesRepository, DevicesRepository>();
             services.AddTransient<IDeviceTokensRepository, DeviceTokensRepository>();
             services.AddTransient<IAppUserTokensRepository, AppUserTokensRepository>();
+            services.AddTransient<IAppUserRepository, AppUserRepository>();
             services.AddTransient<IUserAuthService, UserAuthService>();
             
             services.AddAuthentication(/*options =>
