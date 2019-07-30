@@ -1,4 +1,5 @@
-﻿using SharedLib;
+﻿using Microsoft.EntityFrameworkCore;
+using SharedLib;
 using SharedLib.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,9 @@ namespace WebMinotaur.Repositories
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            var token = db.AppUserTokens.Find(id);
+            db.AppUserTokens.Remove(token);
+            db.SaveChanges();
         }
 
         public bool Exists(string id)
@@ -35,6 +38,16 @@ namespace WebMinotaur.Repositories
         public AppUserToken Get(string id)
         {
             return db.AppUserTokens.Find(id);
+        }
+
+        public List<AppUserToken> GetAllByUserId(string userId)
+        {
+            return db.AppUserTokens.Where(u => u.AppUserId == userId).ToList();
+        }
+
+        public async Task<List<AppUserToken>> GetAllByUserIdAsync(string userId)
+        {
+            return await db.AppUserTokens.Where(u => u.AppUserId == userId).ToListAsync();
         }
 
         public AppUserToken Update(AppUserToken appUserToken)
