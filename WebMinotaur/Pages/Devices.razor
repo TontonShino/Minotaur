@@ -22,7 +22,7 @@
             <td>@context.Name</td>
             <td>
                 <MatButton Outlined="true" @onclick="@( () => editClicked(@context))">Edit</MatButton>
-                <MatButton Outlined="true" >Details</MatButton>
+                <MatButton Outlined="true" @onclick="@(() => detailsClicked(context))">Details</MatButton>
                 <MatButton Outlined="true" @onclick="@( () => deleteClicked(@context))">Delete</MatButton>
             </td>
         </MatTableRow>
@@ -53,11 +53,28 @@ else
         <MatCard>
             <p>Delete this device:</p>
             <p>@deviceSelected.Name</p>
+            <p>@deviceSelected.Description</p>
         </MatCard>
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton>Confirm</MatButton>
-        <MatButton>Cancel</MatButton>
+        <MatButton @onclick="@(async () => await ConfirmDeviceDeleteClicked())">Confirm</MatButton>
+        <MatButton @onclick="CancelDeviceDeleteClicked">Cancel</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+<MatDialog IsOpen="showDeviceDetailsDialog">
+    <MatDialogTitle>Device Details</MatDialogTitle>
+    <MatDialogContent>
+        <MatCard>
+            <p>Id:@deviceSelected.Id</p>
+            <p>Name:@deviceSelected.Name</p>
+            <p>Description:@deviceSelected.Description</p>
+            <p>Creation date:@deviceSelected.CreationDate.ToLocalTime()</p>
+            <p>Last update:@deviceSelected.LastUpdateDate.ToLocalTime()</p>
+        </MatCard>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton @onclick="@(() => showDeviceDetailsDialog = false)">Close</MatButton>
     </MatDialogActions>
 </MatDialog>
 
@@ -70,6 +87,7 @@ else
     FormMode mode { get; set; }
     bool showEditDialog = false;
     bool showDeleteDialog = false;
+    bool showDeviceDetailsDialog = false;
 
     protected override async Task OnInitAsync()
     {
@@ -93,10 +111,10 @@ else
     {
         devices = await devicesRepository.GetDevicesAsyncByUserId(userInfo.UserId);
     }
-    void editClicked(Device d)
+    void editClicked(Device device)
     {
         mode = FormMode.Edit;
-        deviceSelected = d;
+        deviceSelected = device;
         showEditDialog = true;
 
     }
@@ -111,6 +129,7 @@ else
         switch(mode)
         {
             case FormMode.Create:
+                setUpUserIdDevice();
                 await devicesRepository.AddDeviceAsync(deviceSelected);
                 break;
             case FormMode.Edit:
@@ -125,10 +144,30 @@ else
         showEditDialog = false;
         await refreshDevices();
     }
-    void deleteClicked(Device d)
+    void deleteClicked(Device device)
     {
-        deviceSelected = d;
+        deviceSelected = device;
         showDeleteDialog = true;
+    }
+    async Task ConfirmDeviceDeleteClicked()
+    {
+        await devicesRepository.DeleteDeviceAsync(deviceSelected.Id);
+        await refreshDevices();
+        //Todo: Toast Success/Failed
+        showDeleteDialog = false;
+    }
+    void CancelDeviceDeleteClicked()
+    {
+        showDeleteDialog = false;
+    }
+    void detailsClicked(Device device)
+    {
+        deviceSelected = device;
+        showDeviceDetailsDialog = true;
+    }
+    void setUpUserIdDevice()
+    {
+        deviceSelected.AppUserId = userInfo.UserId;
     }
 
 }
