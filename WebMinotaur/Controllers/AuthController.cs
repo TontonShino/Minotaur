@@ -2,43 +2,35 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using SharedLib;
 using SharedLib.IRepositories;
 using SharedLib.IServices;
 using SharedLib.Models;
 
-
 namespace WebMinotaur.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class oldAuthenticateController : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
         private readonly ITokenService tokenService;
         private readonly IAppUserTokensRepository appUserTokensRepository;
+        private readonly IAppUserRepository appUserRepository;
+        private readonly UserManager<AppUser> userManager;
 
+        public AuthController(
+            ITokenService tokenService,
+            IAppUserTokensRepository appUserTokensRepository,
+            IAppUserRepository appUserRepository
+            ){
 
-        public oldAuthenticateController
-            (
-                UserManager<AppUser> userManager,
-                ITokenService tokenService,
-                IAppUserTokensRepository appUserTokensRepository
-            )
-        {
-            this.userManager = userManager;
             this.tokenService = tokenService;
+            this.appUserRepository = appUserRepository;
             this.appUserTokensRepository = appUserTokensRepository;
-
         }
 
         [HttpPost]
