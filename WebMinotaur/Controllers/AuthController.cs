@@ -19,17 +19,16 @@ namespace WebMinotaur.Controllers
     {
         private readonly ITokenService tokenService;
         private readonly IAppUserTokensRepository appUserTokensRepository;
-        private readonly IAppUserRepository appUserRepository;
         private readonly UserManager<AppUser> userManager;
 
         public AuthController(
             ITokenService tokenService,
             IAppUserTokensRepository appUserTokensRepository,
-            IAppUserRepository appUserRepository
+            UserManager<AppUser> userManager
             ){
 
             this.tokenService = tokenService;
-            this.appUserRepository = appUserRepository;
+            this.userManager = userManager;
             this.appUserTokensRepository = appUserTokensRepository;
         }
 
