@@ -1,10 +1,72 @@
 ﻿@page "/tokens"
 
 @attribute [Authorize]
+@inject IUserAuthService userAuthService
+@inject IAppUserTokensRepository appUserTokenRepository
 
 <h3>Tokens</h3>
+<div class="text-right">
+    <MatButton Outlined="true">Refresh</MatButton>
+    <MatButton Raised="true" Outlined="true">New</MatButton>
+</div>
 
+@if (tokens.Count > 0)
+{
+    <MatTable Items="tokens">
+        <MatTableHeader>
+            <th>Creation Date</th>
+            <th>Expiration Date</th>
+            <th>Actions</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.CreationDate</td>
+            <td>@context.ExpirationDate</td>
+            <td>
+                @if (context.Enabled == true)
+                    {
+                    <MatButton Outlined="true">Disable</MatButton>
+                    }
+                    else
+                    {
+                    <MatButton Outlined="true">Enable</MatButton>
+                    }
+                <MatButton Outlined="true">Show</MatButton>
+                <MatButton Outlined="true">Delete</MatButton>
+            </td>
+        </MatTableRow>
+    </MatTable>
+}
+else
+{
+    <p>No Token Registered</p>
+}
 @code {
+    [CascadingParameter]
+    Task<AuthenticationState> authStateTask { get; set; }
+    List<AppUserToken> tokens { get; set; } = new List<AppUserToken>();
+    UserInfo userInfo { get; set; } = new UserInfo();
 
+    protected override async Task OnInitAsync()
+    {
+        await setUserId();
+        await setUsername();
+        await refreshTokens();
+    }
+    async Task setUserId()
+    {
+        var authstate = await authStateTask;
+        userInfo = new UserInfo();
+        userInfo.UserId = userAuthService.GetUserId(authstate.User);
+
+    }
+    async Task setUsername()
+    {
+        var authstate = await authStateTask;
+        userInfo.Username = authstate.User.Identity.Name;
+    }
+    async Task refreshTokens()
+    {
+        tokens = await appUserTokenRepository.GetAllByUserIdAsync(userInfo.UserId);
+    }
 
 }
