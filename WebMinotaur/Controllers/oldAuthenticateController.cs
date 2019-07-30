@@ -21,14 +21,14 @@ namespace WebMinotaur.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticateController : ControllerBase
+    public class oldAuthenticateController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
         private readonly ITokenService tokenService;
         private readonly IAppUserTokensRepository appUserTokensRepository;
 
 
-        public AuthenticateController
+        public oldAuthenticateController
             (
                 UserManager<AppUser> userManager,
                 ITokenService tokenService,

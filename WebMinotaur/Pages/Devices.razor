@@ -1,153 +1,134 @@
-@page "/devices"
-
+﻿@page "/devices"
 @attribute [Authorize]
 
-
 @inject IUserAuthService userAuthService
-@inject ITokenService tokenService
-@inject IDevicesRepository deviceRepo
-@inject IDeviceTokensRepository deviceTokensRepository
+@inject IDevicesRepository devicesRepository
 
 <h3>Devices</h3>
-
-<hr />
-<div>
-    <h4>Registered devices</h4>
-    @if (devices.Count == 0)
-    {
-        <div>
-            <p>No devices registered add device name & description.</p>
-        </div>
-    }
-    else
-    {
-        <br />
-        <div>
-            <MatTable Items="@devices" Striped="true">
-                <MatTableHeader>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </MatTableHeader>
-                <MatTableRow>
-                    <td>@context.Name</td>
-                    <td>
-                        <MatButton Outlined="true" @onclick="@(() => EditDevice(context) )">Edit</MatButton>
-                        <MatButton Outlined="true" @onclick="@(() => DeviceDetails(context))">Details</MatButton>
-                        <MatButton Outlined="true" @onclick="@(async () => await RemoveDeviceAsync(@context.Id))">Delete</MatButton>
-                    </td>
-                </MatTableRow>
-            </MatTable>
-        </div>
-        <br />
-    }
+<div class="text-right">
+    <MatButton Outlined="true" @onclick="@(async () => await refreshDevices())">Refresh</MatButton>
+    <MatButton Raised="true" Outlined="true" @onclick="@(() => newClicked() )">New</MatButton>
 </div>
 
-<devicedetails device="@deviceDetails" />
-
-<br />
-
-<devicecreate device="@deviceEdit" OnValidate="@ValidateDevice" mode="@mode" OnCancel="@CancelEdit"/>
-
-
-@code
+@if (devices.Count > 0)
 {
+<div>
+    <MatTable Items="devices">
+        <MatTableHeader>
+            <th>Name</th>
+            <th>Actions</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Name</td>
+            <td>
+                <MatButton Outlined="true" @onclick="@( () => editClicked(@context))">Edit</MatButton>
+                <MatButton Outlined="true" >Details</MatButton>
+                <MatButton Outlined="true" @onclick="@( () => deleteClicked(@context))">Delete</MatButton>
+            </td>
+        </MatTableRow>
+    </MatTable>
+</div>
+}
+else
+{
+    <p>No device registered yet!</p>
+}
+<MatDialog IsOpen="showEditDialog">
+    <MatDialogTitle>Device @mode.ToString()</MatDialogTitle>
+    <MatDialogContent>
+        <MatCard>
+            <MatTextField @bind-Value="@deviceSelected.Name" HelperText="Name"></MatTextField>
+            <MatTextField @bind-Value="@deviceSelected.Description" HelperText="Description"></MatTextField>
+        </MatCard>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton Outlined="true" @onclick="@(async () => await ValidateClicked())">Validate</MatButton>
+        <MatButton Raised="true" OnClick="@(() => showEditDialog = false)">Cancel</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
+<MatDialog IsOpen="showDeleteDialog">
+    <MatDialogTitle>Confirm Delete</MatDialogTitle>
+    <MatDialogContent>
+        <MatCard>
+            <p>Delete this device:</p>
+            <p>@deviceSelected.Name</p>
+        </MatCard>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton>Confirm</MatButton>
+        <MatButton>Cancel</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
+@code {
     [CascadingParameter]
-    Task<AuthenticationState> authenticationStateTask { get; set; }
-    UserInfo userInfo { get; set; } = new UserInfo();
-    Device deviceEdit = new Device();
-    Device deviceDetails { get; set; }
-    List<Device> devices { get; set; }
-    FormMode mode = FormMode.Create;
+    Task<AuthenticationState> authStateTask { get; set; }
+    List<Device> devices { get; set; } = new List<Device>();
+    Device deviceSelected { get; set; } = new Device();
+    UserInfo userInfo { get; set; }
+    FormMode mode { get; set; }
+    bool showEditDialog = false;
+    bool showDeleteDialog = false;
 
     protected override async Task OnInitAsync()
     {
-        await setUsername();
         await setUserId();
+        await setUsername();
         await refreshDevices();
-    }
-
-    async Task addDevice()
-    {
-        await deviceRepo.AddDeviceAsync(deviceEdit);
-
-        var deviceToken = prepareToken();
-
-        await deviceTokensRepository.CreateAsync(deviceToken);
-
-    }
-    DeviceToken prepareToken()
-    {
-        var token = tokenService.GenerateToken(userInfo.Username);
-        var deviceToken = new DeviceToken
-        {
-            Id = tokenService.IntoString(token),
-            DeviceId = deviceEdit.Id,
-            Enabled = true,
-            CreationDate = DateTime.UtcNow,
-            ExpirationDate = token.ValidTo
-        };
-        return deviceToken;
-
-    }
-    async Task refreshDevices()
-    {
-        devices = await deviceRepo.GetDevicesAsyncByUserId(userInfo.UserId) ?? null;
-    }
-    async Task setUsername()
-    {
-        var authState = await authenticationStateTask;
-        userInfo.Username = authState.User.Identity.Name;
     }
     async Task setUserId()
     {
-        var authState = await authenticationStateTask;
-        var user = authState.User;
-        userInfo.UserId = userAuthService.GetUserId(user);
-        deviceEdit.AppUserId = userInfo.UserId;
-    }
-    async Task RemoveDeviceAsync(string id)
-    {
-        await deviceRepo.DeleteDeviceAsync(id);
-        await refreshDevices();
-    }
-
-    void DeviceDetails(Device device)
-    {
-        deviceDetails = device;
-    }
-    void resetDeviceEdit()
-    {
-        deviceEdit = new Device { AppUserId = userInfo.UserId };
-    }
-    async Task ValidateDevice()
-    {
-        if (mode == FormMode.Create)
-        {
-            await addDevice();
-        }
-        else if (mode == FormMode.Edit)
-        {
-            await updateDevice();
-        }
-        resetDeviceEdit();
-        await refreshDevices();
-
+        var authstate = await authStateTask;
+        userInfo = new UserInfo();
+        userInfo.UserId = userAuthService.GetUserId(authstate.User);
 
     }
-    async Task updateDevice()
+    async Task setUsername()
     {
-        await deviceRepo.UpdateDeviceAsync(deviceEdit);
+        var authstate = await authStateTask;
+        userInfo.Username = authstate.User.Identity.Name;
     }
-    void EditDevice(Device device)
+    async Task refreshDevices()
+    {
+        devices = await devicesRepository.GetDevicesAsyncByUserId(userInfo.UserId);
+    }
+    void editClicked(Device d)
     {
         mode = FormMode.Edit;
-        deviceEdit = device;
+        deviceSelected = d;
+        showEditDialog = true;
+
     }
-    void CancelEdit()
+    void newClicked()
     {
         mode = FormMode.Create;
-        resetDeviceEdit();
+        deviceSelected = new Device();
+        showEditDialog = true;
     }
+    async Task ValidateClicked()
+    {
+        switch(mode)
+        {
+            case FormMode.Create:
+                await devicesRepository.AddDeviceAsync(deviceSelected);
+                break;
+            case FormMode.Edit:
+                await devicesRepository.UpdateDeviceAsync(deviceSelected);
+                break;
+            default:
+                Console.WriteLine("Err");
+                break;
+
+                //Todo: Toast                
+        }
+        showEditDialog = false;
+        await refreshDevices();
+    }
+    void deleteClicked(Device d)
+    {
+        deviceSelected = d;
+        showDeleteDialog = true;
+    }
+
 }

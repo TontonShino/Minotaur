@@ -55,8 +55,6 @@ namespace WebMinotaur.Repositories
             {
                 var infoIps = db.InfoIP.Where(d => d.DeviceId == id);
                 db.InfoIP.RemoveRange(infoIps);
-                var TokenDevices = db.DeviceTokens.Where(d => d.DeviceId == id);
-                db.DeviceTokens.RemoveRange(TokenDevices);
                 db.Devices.Remove(device);
                 await db.SaveChangesAsync();
             }

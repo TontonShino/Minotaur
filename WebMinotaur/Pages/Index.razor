@@ -1,5 +1,7 @@
 ﻿@page "/"
+
 @attribute [Authorize]
+
 @inject IUserAuthService userAuthService
 @inject IDevicesRepository devicesRepository
 
@@ -9,6 +11,7 @@
 }
 else
 {
+<div class="container-fluid">
     <MatTable Items="devices">
         <MatTableHeader>
             <th>Name</th>
@@ -25,17 +28,16 @@ else
                 }
                 else
                 {
-                
+
                 <td>@context.InfoIP.FirstOrDefault().Ip  (@context.InfoIP.FirstOrDefault().Record.ToLocalTime())</td>
 
                 }
-            
             <td>
                 <MatButton OnClick="@( async () => await showHistoryClick(context.Id))">Show history</MatButton>
             </td>
         </MatTableRow>
     </MatTable>
-
+</div>
     <MatDialog IsOpen="showHistoryDeviceDialog">
         <MatDialogTitle>
             Device history

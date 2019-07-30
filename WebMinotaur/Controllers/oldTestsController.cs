@@ -12,11 +12,11 @@ namespace WebMinotaur.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestsController : ControllerBase
+    public class oldTestsController : ControllerBase
     {
         private readonly ITokenService tokenService;
         private readonly ApplicationDbContext db;
-        public TestsController(ITokenService tokenService, ApplicationDbContext db)
+        public oldTestsController(ITokenService tokenService, ApplicationDbContext db)
         {
             this.tokenService = tokenService;
             this.db = db;

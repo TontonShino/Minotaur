@@ -24,23 +24,21 @@ namespace WebMinotaur.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
-    public class DevicesController : ControllerBase
+    public class oldDevicesController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
         private readonly ApplicationDbContext _context;
-        private readonly IDeviceTokensRepository deviceTokensRepository;
         private readonly IDevicesRepository devicesRepository;
         private readonly IAppUserTokensRepository appUserTokensRepository;
         private readonly ITokenService tokenService;
         private readonly IAppUserRepository appUserRepository;
-        public DevicesController
+        public oldDevicesController
             (
                 ApplicationDbContext context, 
                 IDevicesRepository dr, 
                 IAppUserTokensRepository appUserTokensRepository,
                 ITokenService tokenService,
-                IAppUserRepository appUserRepository,
-                IDeviceTokensRepository deviceTokensRepository
+                IAppUserRepository appUserRepository
+                
             )
         {
             _context = context;
@@ -48,7 +46,7 @@ namespace WebMinotaur.Controllers
             this.appUserTokensRepository = appUserTokensRepository;
             this.tokenService = tokenService;
             this.appUserRepository = appUserRepository;
-            this.deviceTokensRepository = deviceTokensRepository;
+            
             
            
         }
@@ -145,13 +143,13 @@ namespace WebMinotaur.Controllers
         //    return _context.Devices.Any(e => e.Id == id);
         //}
         #endregion oldCode
-
+        /*
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public IActionResult PostDevice([FromBody]DeviceModel deviceModel)
         {
             //get Token
-            var accessToken = Request.Headers["Authorization"].ToString().Split(' ')[1];
+            var accessToken = Request.Headers["Authorization"].ToString().Replace("Bearer","").Trim();
 
             if(appUserTokensRepository.Exists(accessToken))
             {
@@ -194,5 +192,6 @@ namespace WebMinotaur.Controllers
             }
             return NotFound();
         }
+        */
     }
 }
