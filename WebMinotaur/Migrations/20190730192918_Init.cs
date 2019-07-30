@@ -196,27 +196,6 @@ namespace WebMinotaur.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeviceTokens",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    ExpirationDate = table.Column<DateTime>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false),
-                    DeviceId = table.Column<string>(nullable: true),
-                    Enabled = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeviceTokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DeviceTokens_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "InfoIP",
                 columns: table => new
                 {
@@ -285,11 +264,6 @@ namespace WebMinotaur.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceTokens_DeviceId",
-                table: "DeviceTokens",
-                column: "DeviceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InfoIP_DeviceId",
                 table: "InfoIP",
                 column: "DeviceId");
@@ -314,9 +288,6 @@ namespace WebMinotaur.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "DeviceTokens");
 
             migrationBuilder.DropTable(
                 name: "InfoIP");

@@ -216,25 +216,6 @@ namespace WebMinotaur.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("SharedLib.DeviceToken", b =>
-                {
-                    b.Property<string>("Id");
-
-                    b.Property<DateTime>("CreationDate");
-
-                    b.Property<string>("DeviceId");
-
-                    b.Property<bool>("Enabled");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("DeviceTokens");
-                });
-
             modelBuilder.Entity("SharedLib.InfoIP", b =>
                 {
                     b.Property<int>("Id")
@@ -316,13 +297,6 @@ namespace WebMinotaur.Migrations
                     b.HasOne("SharedLib.AppUser", "AppUser")
                         .WithMany("Devices")
                         .HasForeignKey("AppUserId");
-                });
-
-            modelBuilder.Entity("SharedLib.DeviceToken", b =>
-                {
-                    b.HasOne("SharedLib.Device", "Device")
-                        .WithMany("TokenDevices")
-                        .HasForeignKey("DeviceId");
                 });
 
             modelBuilder.Entity("SharedLib.InfoIP", b =>
