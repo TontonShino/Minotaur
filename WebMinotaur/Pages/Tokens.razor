@@ -3,11 +3,12 @@
 @attribute [Authorize]
 @inject IUserAuthService userAuthService
 @inject IAppUserTokensRepository appUserTokenRepository
+@inject ITokenService tokenService
 
 <h3>Tokens</h3>
 <div class="text-right">
-    <MatButton Outlined="true">Refresh</MatButton>
-    <MatButton Raised="true" Outlined="true">New</MatButton>
+    <MatButton Outlined="true" @onclick="@(async () => await refreshTokens())">Refresh</MatButton>
+    <MatButton Raised="true" Outlined="true" @onclick="@(async () => await NewTokenClicked())">New</MatButton>
 </div>
 
 @if (tokens.Count > 0)
@@ -24,14 +25,14 @@
             <td>
                 @if (context.Enabled == true)
                     {
-                    <MatButton Outlined="true">Disable</MatButton>
+                    <MatButton Outlined="true" @onclick="@(async () => await DisableTokenClicked(context))">Disable</MatButton>
                     }
                     else
                     {
-                    <MatButton Outlined="true">Enable</MatButton>
+                    <MatButton Outlined="true" @onclick="@(async () => await EnableTokenClicked(context))">Enable</MatButton>
                     }
-                <MatButton Outlined="true">Show</MatButton>
-                <MatButton Outlined="true">Delete</MatButton>
+                <MatButton Outlined="true" @onclick="@(() => showTokenClicked(context))">Show</MatButton>
+                <MatButton Outlined="true" @onclick="@(async () => await DeleteTokenClicked(context))">Delete</MatButton>
             </td>
         </MatTableRow>
     </MatTable>
@@ -40,11 +41,28 @@ else
 {
     <p>No Token Registered</p>
 }
+<MatDialog IsOpen="showTokenDialog">
+    <MatDialogTitle>Show token</MatDialogTitle>
+    <MatDialogContent>
+        <div class="card">
+            <div class="card-body">
+                <p>@selectedToken.Id</p>
+            </div>
+        </div>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton Outlined="true" @onclick="@(() => showTokenDialog = false)">Close</MatButton>
+        <MatButton Raised="true">Copy to clipboard</MatButton>
+    </MatDialogActions>
+</MatDialog>
 @code {
     [CascadingParameter]
     Task<AuthenticationState> authStateTask { get; set; }
     List<AppUserToken> tokens { get; set; } = new List<AppUserToken>();
     UserInfo userInfo { get; set; } = new UserInfo();
+    bool showTokenDialog = false;
+    AppUserToken selectedToken { get; set; } = new AppUserToken();
+
 
     protected override async Task OnInitAsync()
     {
@@ -57,7 +75,6 @@ else
         var authstate = await authStateTask;
         userInfo = new UserInfo();
         userInfo.UserId = userAuthService.GetUserId(authstate.User);
-
     }
     async Task setUsername()
     {
@@ -68,5 +85,41 @@ else
     {
         tokens = await appUserTokenRepository.GetAllByUserIdAsync(userInfo.UserId);
     }
+    async Task NewTokenClicked()
+    {
+        var token = tokenService.GenerateToken(userInfo.Username);
+        var appUserTK = new AppUserToken
+        {
+            Id = tokenService.IntoString(token),
+            CreationDate = DateTime.UtcNow,
+            ExpirationDate = token.ValidTo,
+            AppUserId = userInfo.UserId
+
+        };
+        await appUserTokenRepository.CreateAsync(appUserTK);
+        await refreshTokens();
+
+    }
+    void showTokenClicked(AppUserToken token)
+    {
+        selectedToken = token;
+        showTokenDialog = true;
+    }
+    async Task DeleteTokenClicked(AppUserToken token)
+    {
+        await appUserTokenRepository.DeleteAsync(token.Id);
+        await refreshTokens();
+    }
+    async Task DisableTokenClicked(AppUserToken token)
+    {
+        appUserTokenRepository.Disable(token.Id);
+        await refreshTokens();
+    }
+    async Task EnableTokenClicked(AppUserToken token)
+    {
+        appUserTokenRepository.Enable(token.Id);
+        await refreshTokens();
+    }
+
 
 }

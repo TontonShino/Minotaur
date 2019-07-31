@@ -5,6 +5,7 @@
 @inject IUserAuthService userAuthService
 @inject IDevicesRepository devicesRepository
 
+<h3>Home page</h3>
 @if (devices.Count < 1)
 {
     <p>No Device Yet</p>
@@ -33,7 +34,7 @@ else
 
                 }
             <td>
-                <MatButton OnClick="@( async () => await showHistoryClick(context.Id))">Show history</MatButton>
+                <MatButton Outlined="true" OnClick="@( async () => await showHistoryClick(context.Id))">Show history</MatButton>
             </td>
         </MatTableRow>
     </MatTable>
