@@ -20,8 +20,8 @@
             <th>Actions</th>
         </MatTableHeader>
         <MatTableRow>
-            <td>@context.CreationDate</td>
-            <td>@context.ExpirationDate</td>
+            <td>@context.CreationDate.ToLocalTime()</td>
+            <td>@context.ExpirationDate.ToLocalTime()</td>
             <td>
                 @if (context.Enabled == true)
                     {
