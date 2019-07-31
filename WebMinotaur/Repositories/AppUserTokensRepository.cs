@@ -23,10 +23,38 @@ namespace WebMinotaur.Repositories
             return appUserToken;
         }
 
+        public async Task<AppUserToken> CreateAsync(AppUserToken appUserToken)
+        {
+            db.AppUserTokens.Add(appUserToken);
+            await db.SaveChangesAsync();
+            return appUserToken;
+        }
+
         public void Delete(string id)
         {
             var token = db.AppUserTokens.Find(id);
             db.AppUserTokens.Remove(token);
+            db.SaveChanges();
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            var token = await db.AppUserTokens.FindAsync(id);
+            db.AppUserTokens.Remove(token);
+            await db.SaveChangesAsync();
+        }
+
+        public void Disable(string id)
+        {
+            var token = db.AppUserTokens.Find(id);
+            token.Enabled = false;
+            db.SaveChanges();
+        }
+
+        public void Enable(string id)
+        {
+            var token = db.AppUserTokens.Find(id);
+            token.Enabled = true;
             db.SaveChanges();
         }
 
@@ -50,9 +78,23 @@ namespace WebMinotaur.Repositories
             return await db.AppUserTokens.Where(u => u.AppUserId == userId).ToListAsync();
         }
 
+        public async Task<AppUserToken> GetAsync(string id)
+        {
+            return await db.AppUserTokens.FindAsync(id);
+        }
+
         public AppUserToken Update(AppUserToken appUserToken)
         {
-            throw new NotImplementedException();
+            db.AppUserTokens.Update(appUserToken);
+            db.SaveChanges();
+            return appUserToken;
+        }
+
+        public async Task<AppUserToken> UpdateAsync(AppUserToken appUserToken)
+        {
+            db.AppUserTokens.Update(appUserToken);
+            await db.SaveChangesAsync();
+            return appUserToken;
         }
     }
 }
