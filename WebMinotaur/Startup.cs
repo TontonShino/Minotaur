@@ -59,6 +59,7 @@ namespace WebMinotaur
             services.AddTransient<IAppUserTokensRepository, AppUserTokensRepository>();
             services.AddTransient<IAppUserRepository, AppUserRepository>();
             services.AddTransient<IUserAuthService, UserAuthService>();
+            services.AddTransient<IInfoIpRepository, InfoIpRepository>();
             
             services.AddAuthentication(/*options =>
             {
