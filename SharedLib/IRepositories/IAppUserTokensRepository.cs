@@ -18,8 +18,5 @@ namespace SharedLib.IRepositories
         void Delete(string id);
         Task DeleteAsync(string id);
         bool Exists(string id);
-        void Enable(string id);
-        void Disable(string id);
-
     }
 }

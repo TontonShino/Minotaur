@@ -34,8 +34,7 @@ namespace WebMinotaur.Controllers
             if(accessTokenHeader != null)
             {
                 var token = appUserTokensRepository.Get(accessTokenHeader);
-                if(token != null && token.Enabled)
-                {
+                if(token != null) { 
                     var infoIp = new InfoIP
                     {
                         DeviceId = infoIpModel.deviceId,

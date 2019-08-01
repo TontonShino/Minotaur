@@ -44,19 +44,7 @@ namespace WebMinotaur.Repositories
             await db.SaveChangesAsync();
         }
 
-        public void Disable(string id)
-        {
-            var token = db.AppUserTokens.Find(id);
-            token.Enabled = false;
-            db.SaveChanges();
-        }
 
-        public void Enable(string id)
-        {
-            var token = db.AppUserTokens.Find(id);
-            token.Enabled = true;
-            db.SaveChanges();
-        }
 
         public bool Exists(string id)
         {

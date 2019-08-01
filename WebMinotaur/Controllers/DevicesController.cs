@@ -38,7 +38,7 @@ namespace WebMinotaur.Controllers
             if(accessTokenHeader != null)
             {
                 var token = appUserTokensRepository.Get(accessTokenHeader);
-                if(token != null && token.Enabled == true)
+                if(token != null)
                 {
                     var device = new Device
                     {

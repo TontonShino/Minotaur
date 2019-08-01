@@ -23,14 +23,7 @@
             <td>@context.CreationDate.ToLocalTime()</td>
             <td>@context.ExpirationDate.ToLocalTime()</td>
             <td>
-                @if (context.Enabled == true)
-                    {
-                    <MatButton Outlined="true" @onclick="@(async () => await DisableTokenClicked(context))">Disable</MatButton>
-                    }
-                    else
-                    {
-                    <MatButton Outlined="true" @onclick="@(async () => await EnableTokenClicked(context))">Enable</MatButton>
-                    }
+
                 <MatButton Outlined="true" @onclick="@(() => showTokenClicked(context))">Show</MatButton>
                 <MatButton Outlined="true" @onclick="@(async () => await DeleteTokenClicked(context))">Delete</MatButton>
             </td>
@@ -108,16 +101,6 @@ else
     async Task DeleteTokenClicked(AppUserToken token)
     {
         await appUserTokenRepository.DeleteAsync(token.Id);
-        await refreshTokens();
-    }
-    async Task DisableTokenClicked(AppUserToken token)
-    {
-        appUserTokenRepository.Disable(token.Id);
-        await refreshTokens();
-    }
-    async Task EnableTokenClicked(AppUserToken token)
-    {
-        appUserTokenRepository.Enable(token.Id);
         await refreshTokens();
     }
 

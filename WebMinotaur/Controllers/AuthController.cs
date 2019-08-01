@@ -46,7 +46,6 @@ namespace WebMinotaur.Controllers
                     Id = new JwtSecurityTokenHandler().WriteToken(token),
                     ExpirationDate = token.ValidTo,
                     CreationDate = DateTime.UtcNow,
-                    Enabled = true,
                     AppUserId = user.Id
                 };
 
