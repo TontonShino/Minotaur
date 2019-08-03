@@ -9,7 +9,6 @@ namespace SharedLib.IServices
     {
         JwtSecurityToken GenerateToken(string username);
         JwtSecurityToken DecodeToken(string tokenString);
-        bool IsValid(string tokenString);
         string IntoString(JwtSecurityToken token);
 
     }
