@@ -29,16 +29,16 @@ namespace WebMinotaur.Controllers
             this.appUserTokensRepository = appUserTokensRepository;
         }
 
-        
+
         [HttpPost]
         public ActionResult<Device> PostDevice([FromBody]DeviceModel deviceModel)
         {
             ExtractToken();
 
-            if(accessTokenHeader != null)
+            if (accessTokenHeader != null)
             {
                 var token = appUserTokensRepository.Get(accessTokenHeader);
-                if(token != null)
+                if (token != null)
                 {
                     var device = new Device
                     {
@@ -56,13 +56,13 @@ namespace WebMinotaur.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Device>>> GetDevice()
+        public async Task<ActionResult<List<Device>>> GetDevicesAsync()
         {
             ExtractToken();
-            if(accessTokenHeader != null)
+            if (accessTokenHeader != null)
             {
                 var token = appUserTokensRepository.Get(accessTokenHeader);
-                if(token != null)
+                if (token != null)
                 {
                     var devices = await devicesRepository.GetDevicesAsyncByUserId(token.AppUserId);
                     return devices;
@@ -71,6 +71,70 @@ namespace WebMinotaur.Controllers
             return Unauthorized();
         }
 
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<Device>> GetDeviceAsync(string id)
+        {
+            ExtractToken();
+
+            if (accessTokenHeader != null)
+            {
+                var token = appUserTokensRepository.Get(accessTokenHeader);
+                if (token != null)
+                {
+                    var device = await devicesRepository.GetDeviceAsync(id);
+                    if (device.AppUserId == token.AppUserId)
+                    {
+                        return device;
+                    }
+
+                }
+            }
+            return Unauthorized();
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult<Device>> PutDeviceAsync(string id, [FromBody]DeviceModel deviceModel)
+        {
+            ExtractToken();
+
+            if (accessTokenHeader != null)
+            {
+                var token = appUserTokensRepository.Get(accessTokenHeader);
+                if (token != null)
+                {
+                    var device = await devicesRepository.GetDeviceAsync(id);
+                    if (token.AppUserId == device.AppUserId)
+                    {
+                        device.Name = deviceModel?.Name;
+                        device.Description = device?.Description;
+                        await devicesRepository.UpdateDeviceAsync(device);
+                        return device;
+                    }
+                    return NotFound();
+                }
+            }
+            return Unauthorized();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult> DeleteDeviceAsync(string id)
+        {
+            var token = appUserTokensRepository.Get(accessTokenHeader);
+            if (token != null)
+            {
+                var device = await devicesRepository.GetDeviceAsync(id);
+                if (token.AppUserId == device.AppUserId)
+                {
+                    await devicesRepository.DeleteDeviceAsync(id);
+                    return Ok();
+                }
+                return NotFound();
+            }
+            return Unauthorized();
+        }
         private void ExtractToken()
         {
             accessTokenHeader = Request.Headers["Authorization"].ToString().Replace("Bearer", "").Trim();
