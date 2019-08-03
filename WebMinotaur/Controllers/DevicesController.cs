@@ -12,7 +12,7 @@ using SharedLib.Models;
 
 namespace WebMinotaur.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class DevicesController : ControllerBase
@@ -29,7 +29,7 @@ namespace WebMinotaur.Controllers
             this.appUserTokensRepository = appUserTokensRepository;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        
         [HttpPost]
         public ActionResult<Device> PostDevice([FromBody]DeviceModel deviceModel)
         {
@@ -54,6 +54,23 @@ namespace WebMinotaur.Controllers
 
             return Unauthorized();
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Device>>> GetDevice()
+        {
+            ExtractToken();
+            if(accessTokenHeader != null)
+            {
+                var token = appUserTokensRepository.Get(accessTokenHeader);
+                if(token != null)
+                {
+                    var devices = await devicesRepository.GetDevicesAsyncByUserId(token.AppUserId);
+                    return devices;
+                }
+            }
+            return Unauthorized();
+        }
+
         private void ExtractToken()
         {
             accessTokenHeader = Request.Headers["Authorization"].ToString().Replace("Bearer", "").Trim();
