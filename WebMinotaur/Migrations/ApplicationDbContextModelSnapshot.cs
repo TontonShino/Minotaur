@@ -183,8 +183,6 @@ namespace WebMinotaur.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<bool>("Enabled");
-
                     b.Property<DateTime>("ExpirationDate");
 
                     b.HasKey("Id");

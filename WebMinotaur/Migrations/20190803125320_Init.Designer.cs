@@ -9,7 +9,7 @@ using WebMinotaur.Data;
 namespace WebMinotaur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190730192918_Init")]
+    [Migration("20190803125320_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,8 +184,6 @@ namespace WebMinotaur.Migrations
                     b.Property<string>("AppUserId");
 
                     b.Property<DateTime>("CreationDate");
-
-                    b.Property<bool>("Enabled");
 
                     b.Property<DateTime>("ExpirationDate");
 

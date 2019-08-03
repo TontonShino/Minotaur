@@ -74,8 +74,7 @@ namespace WebMinotaur.Migrations
                     Id = table.Column<string>(nullable: false),
                     ExpirationDate = table.Column<DateTime>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
-                    AppUserId = table.Column<string>(nullable: true),
-                    Enabled = table.Column<bool>(nullable: false)
+                    AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
