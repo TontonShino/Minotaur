@@ -143,7 +143,7 @@ namespace WebMinotaur.Repositories
 
         public List<Device> GetDevicesLastIp(string userid)
         {
-            var devices =  db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP).AsNoTracking();
+            var devices =  db.Devices.Where(u => u.AppUserId == userid).Include(t => t.InfoIP);
 
             var filteredDevices = from d in devices
                                   select new Device
@@ -164,7 +164,7 @@ namespace WebMinotaur.Repositories
 
         public async Task<List<InfoIP>> GetDeviceHistoryAsync(string deviceId)
         {
-            return await db.InfoIP.Where(d => d.DeviceId == deviceId).Include(d => d.Device).AsNoTracking().ToListAsync();
+            return await db.InfoIP.Where(d => d.DeviceId == deviceId).Include(d => d.Device).ToListAsync();
         }
 
         public List<InfoIP> GetDeviceHistory(string deviceId)
