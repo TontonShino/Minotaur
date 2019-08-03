@@ -9,8 +9,7 @@ namespace WebMinotaur.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
@@ -18,8 +17,6 @@ namespace WebMinotaur.Data
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<InfoIP> InfoIP { get; set; }
         public virtual DbSet<AppUserToken> AppUserTokens { get; set; }
-
-        //TODO: onmodel creating disable default identity entities aspnetuser ...
 
     }
 }
