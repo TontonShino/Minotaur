@@ -107,8 +107,8 @@ namespace WebMinotaur.Controllers
                     var device = await devicesRepository.GetDeviceAsync(id);
                     if (token.AppUserId == device.AppUserId)
                     {
-                        device.Name = deviceModel?.Name;
-                        device.Description = device?.Description;
+                        device.Name = deviceModel.Name ?? device.Name;
+                        device.Description = device.Description ?? device.Description;
                         await devicesRepository.UpdateDeviceAsync(device);
                         return device;
                     }
@@ -122,6 +122,7 @@ namespace WebMinotaur.Controllers
         [Route("{id}")]
         public async Task<ActionResult> DeleteDeviceAsync(string id)
         {
+            ExtractToken();
             var token = appUserTokensRepository.Get(accessTokenHeader);
             if (token != null)
             {
@@ -129,7 +130,9 @@ namespace WebMinotaur.Controllers
                 if (token.AppUserId == device.AppUserId)
                 {
                     await devicesRepository.DeleteDeviceAsync(id);
-                    return Ok();
+                    return Ok(new {
+                        message = "Removed"
+                    });
                 }
                 return NotFound();
             }
