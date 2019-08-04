@@ -34,7 +34,7 @@ namespace WebMinotaur.Controllers
 
 
         [HttpPost]
-        public ActionResult<InfoIP> PostInfoIp([FromBody]InfoIpModel infoIpModel)
+        public async Task<ActionResult<InfoIP>> PostInfoIp([FromBody]InfoIpModel infoIpModel)
         {
             ExtractToken();
             if (accessTokenHeader != null)
@@ -42,17 +42,23 @@ namespace WebMinotaur.Controllers
                 var token = appUserTokensRepository.Get(accessTokenHeader);
                 if (token != null)
                 {
-                    var infoIp = new InfoIP
+                    var device = await devicesRepository.GetDeviceAsync(infoIpModel.deviceId);
+                    if (device.AppUserId == token.AppUserId)
                     {
-                        DeviceId = infoIpModel.deviceId,
-                        Ip = infoIpModel.ip,
-                        Record = DateTime.UtcNow
-                    };
-                    infoIpRepository.Create(infoIp);
-                    return infoIp;
+
+                        var infoIp = new InfoIP
+                        {
+                            DeviceId = infoIpModel.deviceId,
+                            Ip = infoIpModel.ip,
+                            Record = DateTime.UtcNow
+                        };
+                        await infoIpRepository.CreateAsync(infoIp);
+                        infoIp.Device = null; //If not null cause Error
+                        return infoIp;
+                    }
                 }
             }
-            return Unauthorized();
+            return Unauthorized(new { message = "Unauthorized" });
         }
 
         [HttpGet]
@@ -92,23 +98,23 @@ namespace WebMinotaur.Controllers
         {
             ExtractToken();
 
-            if(accessTokenHeader != null)
+            if (accessTokenHeader != null)
             {
                 var token = appUserTokensRepository.Get(accessTokenHeader);
-                if(token != null)
+                if (token != null)
                 {
                     var infoIp = await infoIpRepository.GetAsync(id);
                     var device = await devicesRepository.GetDeviceAsync(infoIp.DeviceId);
 
-                    if(device.AppUserId == token.AppUserId)
+                    if (device.AppUserId == token.AppUserId)
                     {
                         await infoIpRepository.GetAsync(id);
                         return infoIp;
                     }
-                    return NotFound(new { message ="Not Found"});
+                    return NotFound(new { message = "Not Found" });
                 }
             }
-            return Unauthorized(new { message = "Unauthorized"});
+            return Unauthorized(new { message = "Unauthorized" });
         }
 
         [HttpDelete]
@@ -117,14 +123,14 @@ namespace WebMinotaur.Controllers
         {
             ExtractToken();
             var token = appUserTokensRepository.Get(accessTokenHeader);
-            if(token != null)
+            if (token != null)
             {
                 var infoIp = await infoIpRepository.GetAsync(id);
                 var device = await devicesRepository.GetDeviceAsync(infoIp.DeviceId);
                 if (device.AppUserId == token.AppUserId)
                 {
                     await infoIpRepository.DeleteAsync(id);
-                    return Ok(new { message = "Deleted"});
+                    return Ok(new { message = "Deleted" });
                 }
                 return NotFound(new { message = "Not Found" });
 
