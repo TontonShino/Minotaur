@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Converters;
 using System.Globalization;
+using System.IO;
 
 namespace ConsoleClient
 {
@@ -14,34 +15,49 @@ namespace ConsoleClient
     {
         static async Task Main(string[] args)
         {
-            var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiZGFuc29rb0BnbWFpbC5jb20iLCJqdGkiOiIxNTJmMjRkNi0yZTViLTQxZDctYmI5ZS1mZWM0YzBjMDVmMDMiLCJleHAiOjE1NzI1MTQ2NzIsImlzcyI6Imh0dHA6Ly9taW5vdGF1ci5mciIsImF1ZCI6Imh0dHA6Ly9taW5vdGF1ci5mciJ9.LKaRWjRwtJi-iRJw5yCIZ20BXnWivWZ54YWnQtSKfBE";
+            #region TEST
+            //var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b250b25AaGlyb3NvZnQuY29tIiwianRpIjoiNzRmNzNhYzMtMWQzMi00M2Q0LWEzZWYtN2U1YTc4YTFhODRiIiwiZXhwIjoxNTcyNzk1MTIwLCJpc3MiOiJodHRwOi8vbWlub3RhdXIuZnIiLCJhdWQiOiJodHRwOi8vbWlub3RhdXIuZnIifQ.ha7HSpiL_3MPJGQOO01eSQuVmo6OPR0EXhAkzaMo82s";
+            //var httpClient = new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://localhost:44307/api/"),
+            //};
+            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+
+            //var data = new
+            //{
+            //    username = "tonton@hirosoft.com",
+            //    password = "P@$$word75"
+            //};
+
+            //var stringContent = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            //var json = JsonConvert.SerializeObject(data);
+
+            //var res = await httpClient.PostAsync("Auth/login", stringContent);
+            //Console.WriteLine($"Response: \n {await res.Content.ReadAsStringAsync()}");
+            //string tk = await res.Content.ReadAsStringAsync();
+            //var tokenResponse = TokenResponse.FromJson(tk);
+
+
+            //string name = Environment.MachineName;
+            //Console.WriteLine($"This computer name is: {name}");
+            #endregion TEST
 
             //Check if config already Exist
-            var httpClient = new HttpClient
+
+            string file = "Data/config.txt";
+
+            var existsFile = File.Exists(file);
+            Console.Write($"file exists {existsFile}");
+            if(existsFile)
             {
-                BaseAddress = new Uri("https://localhost:44307/api/"),
-            };
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                //try to extract token
 
+                //compare the expiration date
 
-            var data = new LoginModel
-            {
-                username = "bdansoko@gmail.com",
-                password = "P@$$word92220"
-            };
-            var stringContent = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-            var json = JsonConvert.SerializeObject(data);
+                
+            }
 
-            var res = await httpClient.PostAsync("Auth/login", stringContent);
-            Console.WriteLine($"Response: \n {await res.Content.ReadAsStringAsync()}");
-            string tk = await res.Content.ReadAsStringAsync();
-            var tokenResponse = TokenResponse.FromJson(tk);
-            
-
-
-
-            string name = Environment.MachineName;
-            Console.WriteLine($"This computer name is: {name}");
         }
 
     }
