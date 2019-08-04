@@ -75,7 +75,11 @@ namespace WebMinotaur.Controllers
                     var device = await devicesRepository.GetDeviceAsync(id);
                     if (device.AppUserId == token.AppUserId)
                     {
-                        var infoIps = await infoIpRepository.GetLastAsync(id);
+                        var infoIps = await infoIpRepository.GetRecentsAsync(id);
+                        foreach(var i in infoIps)
+                        {
+                            i.Device = null;
+                        }
                         return infoIps;
                     }
                     return NotFound(new
