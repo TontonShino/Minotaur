@@ -64,16 +64,16 @@ namespace WebMinotaur.Repositories
             return await db.InfoIP.Where(d => d.DeviceId == deviceId).ToListAsync();
         }
 
-        public List<InfoIP> GetLast(string deviceId)
+        public List<InfoIP> GetRecentsLast(string deviceId)
         {
             //Todo: test if really 10 last
-            return db.InfoIP.Where(d => d.DeviceId == deviceId).TakeLast(10).ToList();
+            return db.InfoIP.Where(d => d.DeviceId == deviceId).OrderByDescending(d => d.Record).Take(10).ToList();
         }
 
-        public async Task<List<InfoIP>> GetLastAsync(string deviceId)
+        public async Task<List<InfoIP>> GetRecentsAsync(string deviceId)
         {
             //Todo: test if really 10 last
-            return await db.InfoIP.Where(d => d.DeviceId == deviceId).TakeLast(10).ToListAsync();
+            return await db.InfoIP.Where(d => d.DeviceId == deviceId).OrderByDescending( d => d.Record).Take(10).ToListAsync();
         }
     }
 }
