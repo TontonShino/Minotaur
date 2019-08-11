@@ -64,7 +64,7 @@ namespace WebMinotaur.Repositories
             return await db.InfoIP.Where(d => d.DeviceId == deviceId).ToListAsync();
         }
 
-        public List<InfoIP> GetRecentsLast(string deviceId)
+        public List<InfoIP> GetRecents(string deviceId)
         {
             //Todo: test if really 10 last
             return db.InfoIP.Where(d => d.DeviceId == deviceId).OrderByDescending(d => d.Record).Take(10).ToList();

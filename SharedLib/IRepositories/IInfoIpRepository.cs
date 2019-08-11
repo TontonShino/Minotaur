@@ -11,7 +11,7 @@ namespace SharedLib.IRepositories
         Task<InfoIP> GetAsync(int id);
         InfoIP Create(InfoIP infoIP);
         Task<InfoIP> CreateAsync(InfoIP infoIP);
-        List<InfoIP> GetRecentsLast(string deviceId);
+        List<InfoIP> GetRecents(string deviceId);
         Task<List<InfoIP>> GetRecentsAsync(string deviceId);
         List<InfoIP> GetByDeviceId(string deviceId);
         Task<List<InfoIP>> GetByDeviceIdAsync(string deviceId);
