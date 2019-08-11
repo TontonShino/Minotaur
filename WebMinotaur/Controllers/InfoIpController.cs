@@ -43,19 +43,17 @@ namespace WebMinotaur.Controllers
                 if (token != null)
                 {
                     var device = await devicesRepository.GetDeviceAsync(infoIpModel.deviceId);
-                    if (device.AppUserId == token.AppUserId)
-                    {
 
-                        var infoIp = new InfoIP
-                        {
-                            DeviceId = infoIpModel.deviceId,
-                            Ip = infoIpModel.ip,
-                            Record = DateTime.UtcNow
-                        };
-                        await infoIpRepository.CreateAsync(infoIp);
-                        infoIp.Device = null; //If not null cause Error
-                        return infoIp;
-                    }
+                    var infoIp = new InfoIP
+                    {
+                        DeviceId = infoIpModel.deviceId,
+                        Ip = infoIpModel.ip,
+                        Record = DateTime.UtcNow
+                    };
+                    await infoIpRepository.CreateAsync(infoIp);
+                    infoIp.Device = null; //If not null cause Error
+                    return infoIp;
+
                 }
             }
             return Unauthorized(new { message = "Unauthorized" });
@@ -63,7 +61,7 @@ namespace WebMinotaur.Controllers
 
         [HttpGet]
         [Route("recents/{id}")]
-        public async Task<ActionResult<List<InfoIP>>> GetInfoIpLastByDeviceIdAsync(string id)
+        public async Task<ActionResult<List<InfoIP>>> GetInfoIpRecentsByDeviceIdAsync(string id)
         {
             ExtractToken();
 
@@ -73,10 +71,10 @@ namespace WebMinotaur.Controllers
                 if (token != null)
                 {
                     var device = await devicesRepository.GetDeviceAsync(id);
-                    if (device.AppUserId == token.AppUserId)
+                    if (device.AppUserId == token.AppUserId && device != null)
                     {
                         var infoIps = await infoIpRepository.GetRecentsAsync(id);
-                        foreach(var i in infoIps)
+                        foreach (var i in infoIps)
                         {
                             i.Device = null;
                         }
@@ -108,13 +106,18 @@ namespace WebMinotaur.Controllers
                 if (token != null)
                 {
                     var infoIp = await infoIpRepository.GetAsync(id);
-                    var device = await devicesRepository.GetDeviceAsync(infoIp.DeviceId);
+                    var device = await devicesRepository.GetDeviceAsync(infoIp?.DeviceId);
 
-                    if (device.AppUserId == token.AppUserId)
+                    if (device != null && infoIp != null)
                     {
-                        await infoIpRepository.GetAsync(id);
-                        return infoIp;
+                        if (device.AppUserId == token.AppUserId)
+                        {
+                            infoIp.Device = null;
+                            return infoIp;
+                        }
                     }
+
+
                     return NotFound(new { message = "Not Found" });
                 }
             }
@@ -131,7 +134,7 @@ namespace WebMinotaur.Controllers
             {
                 var infoIp = await infoIpRepository.GetAsync(id);
                 var device = await devicesRepository.GetDeviceAsync(infoIp.DeviceId);
-                if (device.AppUserId == token.AppUserId)
+                if (device.AppUserId == token.AppUserId && infoIp != null)
                 {
                     await infoIpRepository.DeleteAsync(id);
                     return Ok(new { message = "Deleted" });
