@@ -1,0 +1,1 @@
+# Minotaur Blazor (server-side)
