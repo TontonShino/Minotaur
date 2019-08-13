@@ -4,7 +4,8 @@
 @inject IUserAuthService userAuthService
 @inject IAppUserTokensRepository appUserTokenRepository
 @inject ITokenService tokenService
-
+@inject ClipboardService clipboard
+@inject IMatToaster Toaster
 <h3>Tokens</h3>
 <div class="text-right">
     <MatButton Outlined="true" @onclick="@(async () => await refreshTokens())">Refresh</MatButton>
@@ -45,9 +46,10 @@ else
     </MatDialogContent>
     <MatDialogActions>
         <MatButton Outlined="true" @onclick="@(() => showTokenDialog = false)">Close</MatButton>
-        <MatButton Raised="true">Copy to clipboard</MatButton>
+        <MatButton Raised="true" @onclick="@(async () => await CopyToClipboardClicked())">Copy to clipboard</MatButton>
     </MatDialogActions>
 </MatDialog>
+
 @code {
     [CascadingParameter]
     Task<AuthenticationState> authStateTask { get; set; }
@@ -55,6 +57,7 @@ else
     UserInfo userInfo { get; set; } = new UserInfo();
     bool showTokenDialog = false;
     AppUserToken selectedToken { get; set; } = new AppUserToken();
+
 
 
     protected override async Task OnInitAsync()
@@ -103,6 +106,10 @@ else
         await appUserTokenRepository.DeleteAsync(token.Id);
         await refreshTokens();
     }
-
+    async Task CopyToClipboardClicked()
+    {
+        await clipboard.WriteTextAsync(selectedToken.Id);
+        Toaster.Add("Toast body text", MatToastType.Primary, "code");
+    }
 
 }

@@ -23,6 +23,8 @@ using WebMinotaur.Repositories;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
 using EmbeddedBlazorContent;
+using CurrieTechnologies.Razor.Clipboard;
+using MatBlazor;
 
 namespace WebMinotaur
 {
@@ -52,6 +54,19 @@ namespace WebMinotaur
 
             services.AddServerSideBlazor();
             services.AddMvc();
+            services.AddClipboard();
+
+            services.AddMatToaster(config =>
+            {
+                config.Position = MatToastPosition.BottomCenter;
+                config.PreventDuplicates = true;
+                config.NewestOnTop = true;
+                config.ShowCloseButton = true;
+                config.MaximumOpacity = 95;
+                config.VisibleStateDuration = 3000;
+            });
+
+
 
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IConfigService, ConfigService>();
