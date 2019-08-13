@@ -9,6 +9,7 @@ namespace ConsoleClient
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public TokenValidation TokenValidation {get;set;}
+        public TokenValidation TokenValidation { get; set; }
+        public string appUserId { get; set; }
     }
 }

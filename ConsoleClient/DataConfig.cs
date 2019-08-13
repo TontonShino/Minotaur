@@ -33,6 +33,7 @@ namespace ConsoleClient
         {
             streamReader = new StreamReader(loginSettings);
             var data = streamReader.ReadToEnd();
+            streamReader.Close();
             return data;
         }
         public void SaveClientSettings(string json)
@@ -45,6 +46,7 @@ namespace ConsoleClient
         {
             streamReader = new StreamReader(clientSettings);
             var data = streamReader.ReadToEnd();
+            streamReader.Close();
             return data;
         }
        

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,7 +17,7 @@ namespace ConsoleClient
 
         public RequestClient() { }
         public RequestClient(string token) { this.token = token; }
-        public async Task<string> Login(Login login)
+        public async Task<string> Login(LoginVieModel login)
         {
             PrepareRequest();
             var content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
@@ -30,9 +31,12 @@ namespace ConsoleClient
             var response = await httpClient.PostAsync("Devices/",content);
             return await response.Content.ReadAsStringAsync();
         }
-        public void PostState()
+        public async Task<HttpStatusCode> PostState(DeviceState deviceState)
         {
             PrepareRequest();
+            var content = new StringContent(JsonConvert.SerializeObject(deviceState), Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync("InfoIp/", content);
+            return response.StatusCode;
         }
         private void SetUpBaseAddress()
         {
