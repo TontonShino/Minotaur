@@ -6,6 +6,10 @@
 @inject IDevicesRepository devicesRepository
 
 <h3>Home page</h3>
+
+<div class="text-right">
+    <MatButton Raised="true" @onclick="@(async () => await refreshDevices())">Refresh</MatButton>
+</div>
 @if (devices.Count < 1)
 {
     <p>No Device Yet</p>
@@ -74,7 +78,7 @@ else
     bool showHistoryDeviceDialog { get; set; } = false;
     List<InfoIP> selectedInfoIPs { get; set; } = new List<InfoIP>();
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         await setUserId();
         await setUsername();

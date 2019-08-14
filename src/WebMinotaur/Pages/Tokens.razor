@@ -59,8 +59,7 @@ else
     AppUserToken selectedToken { get; set; } = new AppUserToken();
 
 
-
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         await setUserId();
         await setUsername();

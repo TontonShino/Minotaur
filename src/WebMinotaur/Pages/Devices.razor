@@ -89,7 +89,7 @@ else
     bool showDeleteDialog = false;
     bool showDeviceDetailsDialog = false;
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         await setUserId();
         await setUsername();

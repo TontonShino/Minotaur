@@ -60,7 +60,12 @@ namespace ConsoleClient
 
                 requestClient.token = clientConfig.TokenValidation.token;
 
-                var deviceString = await requestClient.RegisterNewDevice(new DeviceRegisterModel { name=clientConfig.Name, description = clientConfig.Description });
+                var deviceString = await requestClient.RegisterNewDevice(
+                    new DeviceRegisterModel
+                    {
+                        name =clientConfig.Name, description = clientConfig.Description
+                    });
+
                 var device = JsonConvert.DeserializeObject<DeviceViewModel>(deviceString);
                 Console.WriteLine($"deviceId = {device.id} UserId = {device.appUserId}");
 
