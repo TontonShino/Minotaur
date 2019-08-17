@@ -14,22 +14,16 @@ namespace ClientService
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private IConfiguration _configuration;
         private IDeviceConfiguration _deviceConfiguration;
-        private IJsonManager _jsonManager;
         private IRequest _request;
         private Device myDevice;
 
         public Worker(ILogger<Worker> logger,
-        IConfiguration configuration,
         IDeviceConfiguration deviceConfiguration,
-        IJsonManager jsonManager,
         IRequest request)
         {
-            _configuration = configuration;
             _logger = logger;
             _deviceConfiguration = deviceConfiguration;
-            _jsonManager = jsonManager;
             _request = request;
         }
         private async Task Login()
@@ -62,6 +56,14 @@ namespace ClientService
             await _request.PostState(deviceState);
         }
 
+        private bool TokenExpired()
+        {
+            return myDevice.tokenValidation.expiration > DateTime.UtcNow ;
+        }
+        private bool TokenExists()
+        {
+            return myDevice.tokenValidation.token != "";
+        }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             myDevice = _deviceConfiguration.GetDeviceConfiguration();
@@ -90,14 +92,15 @@ namespace ClientService
 
             }
 
-            Console.WriteLine($"Token value = {myDevice.tokenValidation.token} ");
-            Console.WriteLine($"Token Exipration = {myDevice.tokenValidation.expiration} ");
+
             
             while (!stoppingToken.IsCancellationRequested)
             {
-
+                if(!TokenExists() || TokenExpired())
+                {
+                    await Login();
+                }
                 await PostState();
-                Console.WriteLine($"Next tick in 15 secs");
 
                 await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
             }
