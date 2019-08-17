@@ -8,7 +8,7 @@ namespace ClientService.Service
     public class DeviceConfiguration : IDeviceConfiguration
     {
         private readonly IJsonManager _jsonManager;
-        private string clientSettings = "client.json";
+        private readonly string clientSettings = "client.json";
         private StreamReader streamReader;
         private StreamWriter streamWriter;
 
