@@ -29,6 +29,7 @@ namespace ClientService
         private async Task Login()
         {
             var result = await _request.Login();
+            _logger.LogInformation("Login result : ");
             myDevice.tokenValidation = result; //Getting token
         }
         private async Task RegisterDevice()
@@ -41,6 +42,7 @@ namespace ClientService
                 Description = myDevice.Description
             };
             var result = await _request.RegisterNewDevice(deviceToRegister);
+            _logger.LogInformation("Register device result:",result);
             myDevice.Id = result.id;
             myDevice.appUserId = result.appUserId;
 
@@ -52,51 +54,45 @@ namespace ClientService
                 deviceId = myDevice.Id,
                 ip = DeviceInfo.GetMachineIPAddrress()
             };
-            Console.WriteLine($"device state : {deviceState.ip}, {DateTime.UtcNow} {deviceState.deviceId}");
+            _logger.LogInformation($"device state send to the server: {deviceState.ip}, {DateTime.UtcNow} {deviceState.deviceId}");
             await _request.PostState(deviceState);
         }
 
         private bool TokenExpired()
         {
-            return myDevice.tokenValidation.expiration > DateTime.UtcNow ;
+            return myDevice.tokenValidation.expiration < DateTime.UtcNow ;
         }
         private bool TokenExists()
         {
-            return myDevice.tokenValidation.token != "";
+            return myDevice.tokenValidation.token != "" || myDevice.tokenValidation.token != null;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             myDevice = _deviceConfiguration.GetDeviceConfiguration();
-            Console.WriteLine($"Device :{myDevice.Id} {myDevice.Description} {myDevice.appUserId}");
            
             if(myDevice.tokenValidation.token == ""  || myDevice.tokenValidation.expiration < DateTime.UtcNow)
             {
                 try
                 {
                     await Login();
-
-
                     //if id == null  (unregistered device)
                     if(myDevice.Id == "")
                     {
-                        await RegisterDevice();
+                        await RegisterDevice();                        
                     }
                     _deviceConfiguration.SaveDeviceConfiguration(myDevice);
-                    
-                    
+
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"{e.ToString()}");
+                    _logger.LogInformation($"{e.ToString()}");
                 }
 
             }
-
-
-            
+           
             while (!stoppingToken.IsCancellationRequested)
             {
-                if(!TokenExists() || TokenExpired())
+                if(TokenExpired())
                 {
                     await Login();
                 }
