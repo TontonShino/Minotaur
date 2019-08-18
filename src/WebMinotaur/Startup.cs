@@ -75,7 +75,7 @@ namespace WebMinotaur
             services.AddTransient<IAppUserRepository, AppUserRepository>();
             services.AddTransient<IUserAuthService, UserAuthService>();
             services.AddTransient<IInfoIpRepository, InfoIpRepository>();
-            
+            services.AddTransient<HttpClient>();
             services.AddAuthentication(/*options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -98,21 +98,6 @@ namespace WebMinotaur
                 };
             });
 
-
-
-            if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
-            {
-                // Setup HttpClient for server side in a client side compatible fashion
-                services.AddScoped<HttpClient>(s =>
-                {
-                    // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
-                    var uriHelper = s.GetRequiredService<IUriHelper>();
-                    return new HttpClient
-                    {
-                        BaseAddress = new Uri(uriHelper.GetBaseUri())
-                    };
-                });
-            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,7 +123,7 @@ namespace WebMinotaur
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
+            app.UseEmbeddedBlazorContent(typeof(BaseMatComponent).Assembly);
             
             app.UseEndpoints(endpoints =>
             {
