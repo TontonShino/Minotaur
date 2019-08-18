@@ -1,7 +1,7 @@
-# ![](doc/img/minotaur.png) Minotaur (server-side) ![](doc/img/minotaur.png)
+# ![](doc/img/minotaur.png) Minotaur (blazor server-side) ![](doc/img/minotaur.png)
 
 ## Description
-Minotaur is server-side blazor application which monitor your device.
+Minotaur is server-side blazor application which monitor your devices.
 This project was made for blazor experimentations & and was design first for getting IP Address from device.
 
 ## What
@@ -19,11 +19,10 @@ This project was made for blazor experimentations & and was design first for get
   
 ### DeviceService
 Deviceservice is the .net core app which use on device you need to monitor.
-The service will request token, register device & and post data to the API.
+The service will request token, register device & and post data to the WebAPI.
 The `appsettings.json` need to be update with your own data like username/password & server-addr(corresponding to api url):
 ```json
 {
-/*Some code here*/
   "login": {
     "username": "tonton@hirosoft.com",
     "password": "P@$$word75"
@@ -32,16 +31,16 @@ The `appsettings.json` need to be update with your own data like username/passwo
   "Delay": 30
 }
 ```
-The `WebMinotaur` should be launched with the good url defined on `DeviceService`.
+The `WebMinotaur` should be launched to be reacheable by `DeviceService`.
 The service use `Ipify` library for getting is own public IP Address before he send it to the server.
 ### Future
 - [ ] Handle Validation form
-- [ ] Make app S.O.L.I.D
-- [ ] Contenerize each layer (API & FRONT)
+- [ ] Make project S.O.L.I.D
+- [ ] Contenerize each layer (API/FRONT/DATA)
 - [ ] Adding more data to send to the server from device
-- [ ] Handle Adding realtime data
-- [ ] Graphs
-- [ ] Dashboard
+- [ ] Handle in-realtime data
+- [ ] Adding visualization graphics
+- [ ] Adding dashboard
 
 ## Captures
 
